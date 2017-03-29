@@ -11,9 +11,9 @@ declare module 'vx-mock' {
      */
     restore(): void;
     /*
-     *
+     * 符合调用次数
      */
-    mock(func: Function): void;
+    callTimes(): number;
   }
   declare interface MockFuncReulst extends BaseMockRequire {
     /*

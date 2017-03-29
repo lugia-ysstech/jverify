@@ -32,6 +32,7 @@ describe('RPCClient', function () {
 
     mockFunc.restore();
     query.getName().should.to.be.equal('Lily');
+    mockFunc.callTimes(2).should.to.be.equal(3);
 
 
   });
@@ -44,6 +45,8 @@ describe('RPCClient', function () {
     query.getAge().should.to.be.equal(18);
     mockVar.restore();
     query.getAge().should.to.be.equal(15);
+    mockVar.callTimes(2).should.to.be.equal(3);
+
   });
 
   it('test mock func has param', () => {
@@ -54,6 +57,7 @@ describe('RPCClient', function () {
       return a - b;
     });
     query.add(1, 2).should.to.be.equal(-1);
+    mockAdd.callTimes(2).should.to.be.equal(2);
 
   });
 
