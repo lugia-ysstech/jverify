@@ -1,7 +1,7 @@
 {
   "name": "vx-mock",
-  "version":"0.5.0",
-  "description":"vx-mock",
+  "version": "0.5.0",
+  "description": "vx-mock",
   "main": "dist/index.js",
   "directories": {
     "test": "./test",
@@ -39,7 +39,10 @@
     "pump": "^1.0.2",
     "run-sequence": "^1.2.2",
     "thunkify": "^2.1.2",
-    "eslint-config-vx": "git+http://192.168.101.103/vx/eslint-config-vx"
+    "eslint-config-vx": "git+http://192.168.101.103/vx/eslint-config-vx",
+    "babel-eslint": "^7.1.0",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-flowtype": "^2.25.0"
   },
   "dependencies": {
     "commander": "^2.9"
