@@ -44,8 +44,17 @@ describe('RPCClient', function () {
     query.getAge().should.to.be.equal(18);
     mockVar.restore();
     query.getAge().should.to.be.equal(15);
-
   });
 
+  it('test mock func has param', () => {
+    const userMock = create(require('./User'));
+    const mockAdd = userMock.mockFunction('add');
+    query.add(1, 2).should.to.be.equal(3);
+    mockAdd.mock((a, b) => {
+      return a - b;
+    });
+    query.add(1, 2).should.to.be.equal(-1);
+
+  });
 
 });

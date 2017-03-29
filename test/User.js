@@ -6,5 +6,8 @@ module.exports = {
   getName () {
     return 'Lily';
   },
+  add (a, b) {
+    return a + b;
+  },
   age: 15,
 };

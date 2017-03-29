@@ -7,7 +7,9 @@ module.exports = {
   getName () {
     return User.getName();
   },
-
+  add(a, b){
+    return User.add(a, b);
+  },
   getAge () {
     return User.age;
   },

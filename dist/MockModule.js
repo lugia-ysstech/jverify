@@ -23,7 +23,7 @@ class MockModuleImpl {
   mockFunction(funcName /*: string*/) /*: MockFuncReulst*/ {
     const orginal = this.target[funcName];
     let mockTarget;
-    this.target[funcName] = function (args) {
+    this.target[funcName] = function (...args) {
       if (mockTarget) {
         return mockTarget.apply(this, args);
       }
