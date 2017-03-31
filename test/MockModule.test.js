@@ -6,7 +6,6 @@ const { mockObject } = require('../dist/index');
 const { create } = mockObject;
 chai.should();
 const { expect } = chai;
-const query = require('./Query');
 
 
 describe('MockModule', function () {
@@ -18,15 +17,23 @@ describe('MockModule', function () {
   });
 
   it('mock func', () => {
-    query.getName().should.to.be.equal('Lily');
-    const userMock = create(require('./User'));
+    const before = 'lily';
+    const user = {
+      getName () {
+        return before;
+      },
+    };
+    const userMock = create(user);
     const mockFunc = userMock.mockFunction('getName');
-    const mockName = 'Ligx';
+    user.getName().should.to.be.equal(before);
+
+    const after = 'Ligx';
     mockFunc.mock(() => {
-      return mockName;
+      return after;
     });
-    query.getName().should.to.be.equal(mockName);
+    user.getName().should.to.be.equal(after);
   });
+
   it('mock func restore', () => {
     const obj = {
       getValue () {
@@ -50,109 +57,84 @@ describe('MockModule', function () {
   });
 
 
-  it('mock var', () => {
-    const userMock = create(require('./User'));
-    const mockVar = userMock.mockVar('age');
-    query.getAge().should.to.be.equal(15);
-    mockVar.mock(18);
-
-    query.getAge().should.to.be.equal(18);
-    mockVar.restore();
-    query.getAge().should.to.be.equal(15);
-    mockVar.callTimes(2).should.to.be.equal(3);
-
-  });
-
-  it('mock var has returned', () => {
-    const userMock = create(require('./User'));
-    const mockVar = userMock.mockVar('age');
-    query.getAge().should.to.be.equal(15);
-    mockVar.returned(17);
-    mockVar.returned(16);
-    query.getAge().should.to.be.equal(17);
-    query.getAge().should.to.be.equal(16);
-
-  });
-
-
-  it('mock var has returned higer than mock', () => {
-    const userMock = create(require('./User'));
-    const mockVar = userMock.mockVar('age');
-    query.getAge().should.to.be.equal(15);
-    mockVar.mock(18);
-    mockVar.returned(17);
-    mockVar.returned(16);
-    query.getAge().should.to.be.equal(17);
-    query.getAge().should.to.be.equal(16);
-    query.getAge().should.to.be.equal(18);
-
-  });
-
   it('test mock func has param', () => {
-    const user = require('./User');
+    const user = {
+      add (a, b) {
+        return a + b;
+      },
+    };
     const userMock = create(user);
     const mockAdd = userMock.mockFunction('add');
-    query.add(1, 2).should.to.be.equal(3);
+    user.add(1, 2).should.to.be.equal(3);
     mockAdd.mock((a, b) => {
       return a - b;
     });
-    query.add(2, 3).should.to.be.equal(-1);
+    user.add(2, 3).should.to.be.equal(-1);
   });
 
   it('test mock func callTimes ', () => {
-    const user = require('./User');
+    const user = {
+      add () {
+      },
+    };
     const userMock = create(user);
     const mockAdd = userMock.mockFunction('add');
-    query.add(1, 2);
-    query.add(1, 2);
-    query.add(1, 2);
-    mockAdd.mock(() => 10);
-    mockAdd.callTimes(2).should.to.be.equal(3);
+    user.add();
+    user.add();
+    user.add();
+    mockAdd.callTimes().should.to.be.equal(3);
   });
 
   it('test mock func verify CallArgs', () => {
-    const user = require('./User');
+    const user = {
+      add () {
+      },
+    };
     const userMock = create(user);
     const mockAdd = userMock.mockFunction('add');
-    query.add(1, 2);
-    query.add(2, 3);
-    query.add(4, 5);
+    const callArgs = [ [ 1, 2 ], [ 'a', false ], [ new Date(), {} ] ];
+    user.add(...callArgs[ 0 ]);
+    user.add(...callArgs[ 1 ]);
+    user.add(...callArgs[ 2 ]);
     mockAdd.mock(() => 10);
-    mockAdd.queryCallArgs().should.to.be.eql([ [ 1, 2 ], [ 2, 3 ], [ 4, 5 ] ]);
-    mockAdd.queryCallArgs()[ 0 ].should.to.be.equal(mockAdd.getCallArgs(0));
-    mockAdd.queryCallArgs()[ 1 ].should.to.be.equal(mockAdd.getCallArgs(1));
+    mockAdd.queryCallArgs().should.to.be.eql(callArgs);
+    mockAdd.getCallArgs(0).should.to.be.eql(callArgs[ 0 ]);
+    mockAdd.getCallArgs(1).should.to.be.eql(callArgs[ 1 ]);
+    mockAdd.getCallArgs(2).should.to.be.eql(callArgs[ 2 ]);
   });
 
   it('test mock func verify CallContext', () => {
-    const user = require('./User');
+    const user = {
+      add () {
+      },
+    };
     const userMock = create(user);
     const mockAdd = userMock.mockFunction('add');
-    query.add();
-    query.add();
+    user.add();
+    user.add();
     mockAdd.mock(() => 10);
-    mockAdd.queryCallContext()[ 0 ].should.to.be.equal(query);
-    mockAdd.queryCallContext()[ 1 ].should.to.be.equal(query);
-    mockAdd.queryCallContext()[ 0 ].should.to.be.equal(mockAdd.getCallContext(0));
-    mockAdd.queryCallContext()[ 1 ].should.to.be.equal(mockAdd.getCallContext(1));
+    mockAdd.queryCallContext()[ 0 ].should.to.be.equal(user);
+    mockAdd.queryCallContext()[ 1 ].should.to.be.equal(user);
+    mockAdd.getCallContext(0).should.to.be.equal(user);
+    mockAdd.getCallContext(1).should.to.be.equal(user);
     // 指定context
     const ctx = { user: '111' };
     mockAdd.mock(() => 10, ctx);
-    query.add();
+    user.add();
     mockAdd.queryCallContext()[ 2 ].should.to.be.equal(ctx);
 
     mockAdd.mock(() => 10);
-    query.add();
-    mockAdd.queryCallContext()[ 3 ].should.to.be.equal(query);
+    user.add();
+    mockAdd.queryCallContext()[ 3 ].should.to.be.equal(user);
 
   });
 
-  it('test mock func verify CallContext context no use for returned', () => {
+  it('test mock func verify CallContext returned context is same to mock', () => {
     const user = {
       add () {
 
       },
     };
-
     const userMock = create(user);
     const mockAdd = userMock.mockFunction('add');
     const obj = {};
@@ -169,8 +151,13 @@ describe('MockModule', function () {
   });
 
 
-  it('test mock func has returned', () => {
-    const userMock = create(require('./User'));
+  it('test mock func returned highter mock', () => {
+    const user = {
+      add () {
+
+      },
+    };
+    const userMock = create(user);
     const mockAdd = userMock.mockFunction('add');
     mockAdd.returned(100);
     mockAdd.returned(101);
@@ -178,11 +165,68 @@ describe('MockModule', function () {
       return 'hello';
     });
 
-    query.add('1', 'b').should.to.be.equal(100);
-    query.add('1', 'b').should.to.be.equal(101);
-    query.add('1', 'b').should.to.be.equal('hello');
+    user.add('1', 'b').should.to.be.equal(100);
+    user.add('1', 'b').should.to.be.equal(101);
+    user.add('1', 'b').should.to.be.equal('hello');
 
   });
+
+
+  it('mock var', () => {
+    const obj = {
+      age: 15,
+    };
+    const userMock = create(obj);
+    const mockVar = userMock.mockVar('age');
+    obj.age.should.to.be.equal(15);
+    mockVar.mock(18);
+    obj.age.should.to.be.equal(18);
+
+  });
+
+  it('mock var restore', () => {
+    const obj = {
+      age: 15,
+    };
+    const userMock = create(obj);
+    const mockVar = userMock.mockVar('age');
+    obj.age.should.to.be.equal(15);
+    mockVar.mock(18);
+
+    obj.age.should.to.be.equal(18);
+
+  });
+
+  it('mock var has returned', () => {
+    const obj = {
+      age: 15,
+    };
+    const userMock = create(obj);
+    obj.age.should.to.be.equal(15);
+    const mockVar = userMock.mockVar('age');
+    mockVar.returned(17);
+    mockVar.returned(16);
+    obj.age.should.to.be.equal(17);
+    obj.age.should.to.be.equal(16);
+
+  });
+
+
+  it('mock var has returned higer than mock', () => {
+    const obj = {
+      age: 15,
+    };
+    const userMock = create(obj);
+    const mockVar = userMock.mockVar('age');
+    mockVar.mock(18);
+    mockVar.returned(17);
+    mockVar.returned(16);
+    obj.age.should.to.be.equal(17);
+    obj.age.should.to.be.equal(16);
+    obj.age.should.to.be.equal(18);
+
+  });
+
   it('test verifyOrder', () => {
 
   });
