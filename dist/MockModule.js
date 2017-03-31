@@ -35,6 +35,7 @@ class MockModuleImpl {
         returned = [],
         mockTarget,
         context,
+        orginalContext,
         times = 0;
     this.target[funcName] = function (...args) {
 
@@ -54,7 +55,7 @@ class MockModuleImpl {
       if (mockTarget) {
         return mockTarget.apply(context, args);
       }
-      return orginal.apply(this, args);
+      return orginal.apply(orginalContext ? orginalContext : this, args);
     };
 
     return {
@@ -86,12 +87,17 @@ class MockModuleImpl {
       restore() {
         mockTarget = undefined;
         returned = [];
+        context = undefined;
         callContext = [];
         callArgs = [];
         times = 0;
+        orginalContext = undefined;
       },
       callTimes() /*: number*/ {
         return times;
+      },
+      mockContext(ctx /*: Object*/) /*: void*/ {
+        orginalContext = ctx;
       }
     };
   }

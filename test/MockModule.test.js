@@ -55,6 +55,33 @@ describe('MockModule', function () {
     obj.getValue().should.to.be.equal(100);
 
   });
+  it('mock func mockContext', () => {
+    const obj = {
+      value: 100,
+      getValue () {
+        return this.value;
+      },
+    };
+    const mock = create(obj).mockFunction('getValue');
+    mock.mockContext({
+      value: 101,
+    });
+    obj.getValue().should.to.be.equal(101);
+  });
+  it('mock func mockContext after restore', () => {
+    const obj = {
+      value: 100,
+      getValue () {
+        return this.value;
+      },
+    };
+    const mock = create(obj).mockFunction('getValue');
+    mock.mockContext({
+      value: 101,
+    });
+    mock.restore();
+    obj.getValue().should.to.be.equal(100);
+  });
 
 
   it('test mock func has param', () => {
@@ -252,7 +279,4 @@ describe('MockModule', function () {
       create({}, null, {});
     }).throw(Error, '开启VerifyOrder，mockName不能为空!');
   });
-
-
-
 });

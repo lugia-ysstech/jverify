@@ -28,7 +28,7 @@ declare module 'vx-mock' {
   }
 
 
-  declare interface MockModuleFuncReulst extends BaseMockRequire {
+  declare interface MockFuncCommonResult extends BaseMockRequire {
     /*
      * 设置桩函数
      */
@@ -50,6 +50,12 @@ declare module 'vx-mock' {
      * 获取第index次的调用信息
      */
     getCallContext(index: number): any;
+  }
+  declare interface MockModuleFuncReulst extends MockFuncCommonResult, BaseMockRequire {
+    /**
+     * 直接mock掉原有方法的上下文,不会影响 mock() 指定的ctx.
+     */
+    mockContext(ctx: Object): void;
   }
 
   declare interface MockVarReulst extends BaseMockRequire {
@@ -81,7 +87,7 @@ declare module 'vx-mock' {
     create(module: any, mockName: ?string, verifyOrder?: VerifyOrder): MockModule;
   }
 
-  declare interface MockFunctionResult extends MockModuleFuncReulst {
+  declare interface MockFunctionResult extends MockFuncCommonResult {
     getFunction(): Function;
   }
 
