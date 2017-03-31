@@ -182,6 +182,18 @@ describe('MockModule', function () {
     mockVar.mock(18);
     obj.age.should.to.be.equal(18);
 
+  });it('mock var calltimes', () => {
+    const obj = {
+      age: 15,
+    };
+    const userMock = create(obj);
+    const mockVar = userMock.mockVar('age');
+    obj.age;
+    obj.age;
+    obj.age;
+    obj.age;
+    mockVar.callTimes().should.to.be.equal(4);
+
   });
 
   it('mock var restore', () => {
@@ -190,11 +202,17 @@ describe('MockModule', function () {
     };
     const userMock = create(obj);
     const mockVar = userMock.mockVar('age');
+    obj.age;
+    obj.age;
+    obj.age;
+    mockVar.mock(1, {});
+    mockVar.returned('a');
+
+    mockVar.restore();
+    // 状态还原
+    mockVar.callTimes().should.to.be.equal(0);
+    // 模拟值还原
     obj.age.should.to.be.equal(15);
-    mockVar.mock(18);
-
-    obj.age.should.to.be.equal(18);
-
   });
 
   it('mock var has returned', () => {
