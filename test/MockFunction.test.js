@@ -4,18 +4,12 @@
 const chai = require('chai');
 const { mockFunction } = require('../dist/index');
 const { create } = mockFunction;
+const { expect } = chai;
 chai.should();
 
 
 describe('MockFunction', function () {
 
-  it('test mock function orginal', () => {
-
-    const mockFunction = create(() => 100);
-
-    const targetFunction = mockFunction.getFunction();
-    targetFunction().should.to.be.equal(100);
-  });
 
   it('test mock function callTimes', () => {
 
@@ -30,10 +24,9 @@ describe('MockFunction', function () {
 
   it('test mock function returned', () => {
 
-    const mockFunction = create(() => 100);
+    const mockFunction = create();
 
     const targetFunc = mockFunction.getFunction();
-    targetFunc().should.to.be.equal(100);
     mockFunction.returned(101);
     mockFunction.returned(102);
     targetFunc().should.to.be.equal(101);
@@ -42,10 +35,9 @@ describe('MockFunction', function () {
 
   it('test mock function mock', () => {
 
-    const mockFunction = create(() => 100);
+    const mockFunction = create();
 
     const targetFunc = mockFunction.getFunction();
-    targetFunc().should.to.be.equal(100);
 
     mockFunction.mock(a => {
       return 2 * a;
@@ -161,6 +153,4 @@ describe('MockFunction', function () {
     mockFunction.queryCallContext().should.to.be.eql([]);
     mockFunction.callTimes().should.to.be.equal(0);
   });
-
-
 });
