@@ -182,7 +182,7 @@ describe('MockModule', function () {
     mockVar.mock(18);
     obj.age.should.to.be.equal(18);
 
-  });it('mock var calltimes', () => {
+  }); it('mock var calltimes', () => {
     const obj = {
       age: 15,
     };

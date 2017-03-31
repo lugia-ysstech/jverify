@@ -2,10 +2,12 @@
  * Created by liguoxin on 2017/2/10.
  * @flow
  */
-/*:: import type { ModuleMockFactory } from 'vx-mock';*/
+/*:: import type { ModuleMockFactory, MockFunctionFactory } from 'vx-mock';*/
 
 
 const mockModuleFacotry /*: ModuleMockFactory*/ = require('./MockModule');
+const functionModuleFacotry /*: MockFunctionFactory*/ = require('./MockFunction');
 module.exports = {
-  mockRequire: mockModuleFacotry
+  mockObject: mockModuleFacotry,
+  mockFunction: functionModuleFacotry
 };

@@ -28,7 +28,7 @@ declare module 'vx-mock' {
   }
 
 
-  declare interface MockFuncReulst extends BaseMockRequire {
+  declare interface MockModuleFuncReulst extends BaseMockRequire {
     /*
      * 设置桩函数
      */
@@ -64,7 +64,7 @@ declare module 'vx-mock' {
      * mock模块中的方法
      * @funcName 目标方法名
      */
-    mockFunction(funcName: string): MockFuncReulst;
+    mockFunction(funcName: string): MockModuleFuncReulst;
     /*
      * mock模块中的变量
      * @varName 目标变量名
@@ -72,30 +72,40 @@ declare module 'vx-mock' {
     mockVar(varName: string): MockVarReulst;
   }
 
+
   declare interface ModuleMockFactory {
     /*
      * 创建mock模块
      * @modulePath mock模块的绝对地址，如果使用相对地址将无法正确加载模块
      */
-    create(module: any): MockModule;
+    create(module: any, verifyOrder?: VerifyOrder): MockModule;
   }
 
-  declare interface VerifyOrderInner {
-    addCallMock(mock: Object, callInfo: CallInfo): void;
+  declare interface MockFunctionResult extends MockModuleFuncReulst {
+    getFunction(): Function;
   }
 
-  declare type CallMock = {
-    mock: Object,
-    callArg: Array<any>,
+  declare interface MockFunctionFactory {
+    /*
+     * 创建mock模块
+     * @modulePath mock模块的绝对地址，如果使用相对地址将无法正确加载模块
+     */
+    create(func: Function, verifyOrder?: VerifyOrder): MockFunctionResult;
   }
+
 
   declare interface VerifyOrder {
-    queryCallMock(): CallMock;
+
+    addModuleCallFunction(mock: Object, funcName: string, callInfo: CallInfo): void;
+    addModuleVar(mock: Object): void;
+    addCallFunction(callInfo: CallInfo): void;
+    verify(): void;
   }
 
 
   declare type ExportObj = {
-    mockRequire: ModuleMockFactory
+    mockObject: ModuleMockFactory;
+    mockFunction: MockFunctionFactory;
   }
 
   declare module.exports: ExportObj

@@ -12,7 +12,7 @@ class MockModuleImpl {
 
   constructor(module /*: Object*/, verifyOrder /*:: ?: VerifyOrder*/) {
     if (!module) {
-      throw new Error('mock的目标对象不能为空!');
+      throw new Error('module的目标路径不能空');
     }
     this.target = module;
     this.verifyOrder = verifyOrder;
@@ -25,25 +25,17 @@ class MockModuleImpl {
   mockFunction(funcName /*: string*/) /*: MockModuleFuncReulst*/ {
 
     const orginal = this.target[funcName];
-    let callArgs = [],
-        callContext = [],
-        returned = [],
-        mockTarget,
+    const callArgs = [];
+    const callContext = [];
+    const returned = [];
+    let mockTarget,
         context,
         times = 0;
     this.target[funcName] = function (...args) {
-
       callArgs.push(args);
-      const existInReturned = returned.length > 0;
-
-      if (context) {
-        callContext.push(context);
-      } else {
-        callContext.push(this);
-      }
-
+      callContext.push(this);
       times++;
-      if (existInReturned) {
+      if (returned.length > 0) {
         return returned.shift();
       }
       if (mockTarget) {
@@ -80,10 +72,6 @@ class MockModuleImpl {
       },
       restore() {
         mockTarget = undefined;
-        returned = [];
-        callContext = [];
-        callArgs = [];
-        times = 0;
       },
       callTimes() /*: number*/ {
         return times;
@@ -96,11 +84,10 @@ class MockModuleImpl {
    * @varName 目标变量名
    */
   mockVar(varName /*: string*/) /*: MockVarReulst*/ {
-    const orginal = this.target[varName];
-
+    const orginal = this.target[varName],
+          returned = [];
     let isMock = false,
         mockTarget,
-        returned = [],
         times = 0;
     Object.defineProperty(this.target, varName, {
       get() {
@@ -124,8 +111,6 @@ class MockModuleImpl {
       },
       restore() {
         isMock = false;
-        times = 0;
-        returned = [];
       },
       callTimes() /*: number*/ {
         return times;
