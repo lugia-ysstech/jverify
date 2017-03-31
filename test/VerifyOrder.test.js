@@ -4,7 +4,6 @@
 const chai = require('chai');
 const { create } = require('../dist/VerifyOrder');
 chai.should();
-const { expect } = chai;
 
 
 describe('MockModule', function () {
@@ -58,7 +57,9 @@ describe('MockModule', function () {
   });
   it('test addCallFunction', () => {
     const order = create(),
-      A = {}, B = {}, C = {};
+      A = {},
+      B = {},
+      C = {};
 
     order.addCallFunction('a', {
       context: A,

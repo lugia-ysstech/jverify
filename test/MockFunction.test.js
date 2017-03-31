@@ -157,7 +157,7 @@ describe('MockFunction', function () {
 
   it('if verifyOrder is notEmpty mockName must had', () => {
     expect(() => {
-      create( null, {});
+      create(null, {});
     }).throw(Error, '开启VerifyOrder，mockName不能为空!');
   });
 
