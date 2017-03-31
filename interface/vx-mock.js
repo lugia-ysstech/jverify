@@ -99,24 +99,26 @@ declare module 'vx-mock' {
     create(mockName: ?string, verifyOrder?: VerifyOrder): MockFunctionResult;
   }
 
-
-  declare type MockObj = {
-    name: string;
-    mock: Object;
-  };
+  declare type MockType = 'func' | 'module_func' | 'module_var'
+  declare type VerifyOrderMock = {
+    name: ?string;
+    type: MockType
+  }
+  declare type VerifyOrderMockList = { [key: string]: Array<VerifyOrderMock>; }
+  declare type ModuleVarStatus = { [key: string]: boolean }
 
   declare interface VerifyOrder {
 
-    addModuleCallFunction(mock: MockObj, funcName: string, callInfo: CallInfo): void;
-    addModuleVar(mock: Object): void;
-    addCallFunction(callInfo: CallInfo): void;
-    verify(): void;
+    addModuleCallFunction(mockName: string, funcName: string, callInfo: CallInfo): void;
+    addModuleVar(mockName: string, attrName: string): void;
+    addCallFunction(mockName: string, callInfo: CallInfo): void;
+    getMock(): any;
   }
+
 
   declare interface VerifyOrderFactory {
     create(): VerifyOrder;
   }
-
   declare type ExportObj = {
     mockObject: ModuleMockFactory;
     mockFunction: MockFunctionFactory;
