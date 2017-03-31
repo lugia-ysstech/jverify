@@ -48,6 +48,21 @@ describe('RPCClient', function () {
     mockVar.callTimes(2).should.to.be.equal(3);
 
   });
+  it('mock var has returned', () => {
+    const userMock = create(require('./User'));
+    const mockVar = userMock.mockVar('age');
+    query.getAge().should.to.be.equal(15);
+    mockVar.mock(18);
+    mockVar.returned(17);
+    mockVar.returned(16);
+    query.getAge().should.to.be.equal(17);
+    query.getAge().should.to.be.equal(16);
+    query.getAge().should.to.be.equal(18);
+    mockVar.restore();
+    query.getAge().should.to.be.equal(15);
+    mockVar.callTimes().should.to.be.equal(5);
+
+  });
 
   it('test mock func has param', () => {
     const userMock = create(require('./User'));
@@ -56,8 +71,25 @@ describe('RPCClient', function () {
     mockAdd.mock((a, b) => {
       return a - b;
     });
-    query.add(1, 2).should.to.be.equal(-1);
+    query.add(2, 3).should.to.be.equal(-1);
     mockAdd.callTimes(2).should.to.be.equal(2);
+    mockAdd.queryCallArgs().should.to.be.eql([ [ 1, 2 ], [ 2, 3 ] ]);
+    mockAdd.queryCallArgs()[0].should.to.be.equal(mockAdd.getCallArgs(0));
+    mockAdd.queryCallArgs()[1].should.to.be.equal(mockAdd.getCallArgs(1));
+  });
+
+  it('test mock func has returned', () => {
+    const userMock = create(require('./User'));
+    const mockAdd = userMock.mockFunction('add');
+    mockAdd.returned(100);
+    mockAdd.returned(101);
+    mockAdd.mock(() => {
+      return 'hello';
+    });
+
+    query.add('1', 'b').should.to.be.equal(100);
+    query.add('1', 'b').should.to.be.equal(101);
+    query.add('1', 'b').should.to.be.equal('hello');
 
   });
 

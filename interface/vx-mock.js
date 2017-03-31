@@ -14,12 +14,34 @@ declare module 'vx-mock' {
      * 符合调用次数
      */
     callTimes(): number;
+
+    /**
+     * 设置返回值，以此作为结果返回，优先级高于mock.
+     */
+    returned(arg: any): void;
+
   }
+
+  declare type CallInfo = {
+    context: Object,
+    args: Array<any>
+  }
+
+
   declare interface MockFuncReulst extends BaseMockRequire {
     /*
      * 设置桩函数
      */
     mock(func: Function): void;
+
+    /*
+     * 查询每一次调用对象的this上下文，以及入参，数组对应的顺序为调用的顺序
+     */
+    queryCallArgs(): Array<any>;
+    /*
+     * 获取第index次的调用信息
+     */
+    getCallArgs(index: number): Array<any>;
   }
 
   declare interface MockVarReulst extends BaseMockRequire {

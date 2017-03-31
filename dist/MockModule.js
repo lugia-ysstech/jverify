@@ -23,10 +23,16 @@ class MockModuleImpl {
   mockFunction(funcName /*: string*/) /*: MockFuncReulst*/ {
 
     const orginal = this.target[funcName];
+    const callArgs = [];
+    const returned = [];
     let mockTarget,
         times = 0;
     this.target[funcName] = function (...args) {
+      callArgs.push(args);
       times++;
+      if (returned.length > 0) {
+        return returned.shift();
+      }
       if (mockTarget) {
         return mockTarget.apply(this, args);
       }
@@ -36,6 +42,18 @@ class MockModuleImpl {
     return {
       mock(target /*: Function*/) {
         mockTarget = target;
+      },
+      queryCallArgs() /*: Array<any>*/ {
+        return callArgs;
+      },
+      getCallArgs(index /*: number*/) /*: any*/ {
+        if (index >= callArgs.length) {
+          return undefined;
+        }
+        return callArgs[index];
+      },
+      returned(arg /*: any*/) /*: void*/ {
+        returned.push(arg);
       },
       restore() {
         mockTarget = undefined;
@@ -51,13 +69,17 @@ class MockModuleImpl {
    * @varName 目标变量名
    */
   mockVar(varName /*: string*/) /*: MockVarReulst*/ {
-    const orginal = this.target[varName];
+    const orginal = this.target[varName],
+          returned = [];
     let isMock = false,
         mockTarget,
         times = 0;
     Object.defineProperty(this.target, varName, {
       get() {
         times++;
+        if (returned.length > 0) {
+          return returned.shift();
+        }
         if (isMock) {
           return mockTarget;
         }
@@ -68,6 +90,9 @@ class MockModuleImpl {
       mock(arg) {
         isMock = true;
         mockTarget = arg;
+      },
+      returned(arg /*: any*/) /*: void*/ {
+        returned.push(arg);
       },
       restore() {
         isMock = false;
