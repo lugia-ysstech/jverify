@@ -2,18 +2,19 @@
  * Created by liguoxin on 2017/3/1.
  */
 const chai = require('chai');
-const { create } = require('../dist/MockModule');
+const { mockObject } = require('../dist/index');
+const { create } = mockObject;
 chai.should();
 const { expect } = chai;
 const query = require('./Query');
 
 
-describe('RPCClient', function () {
+describe('MockModule', function () {
 
   it('create param is Error', () => {
     expect(() => {
       create();
-    }).throw(Error, 'module的目标路径不能空');
+    }).throw(Error, 'mock的目标对象不能为空!');
   });
 
   it('mock func', () => {
@@ -25,17 +26,23 @@ describe('RPCClient', function () {
       return mockName;
     });
     query.getName().should.to.be.equal(mockName);
-    mockFunc.mock(() => {
-      return 'kxy';
-    });
-    query.getName().should.to.be.equal('kxy');
-
-    mockFunc.restore();
-    query.getName().should.to.be.equal('Lily');
-    mockFunc.callTimes(2).should.to.be.equal(3);
-
-
   });
+  it('mock func restore', () => {
+    const obj = {
+      getValue () {
+        return 100;
+      },
+    };
+    const mock = create(obj).mockFunction('getValue');
+
+    obj.getValue().should.to.be.equal(100);
+    mock.returned(100);
+    mock.returned(101);
+    mock.mock(() => 1000);
+    obj.getValue().should.to.be.equal(100);
+  });
+
+
   it('mock var', () => {
     const userMock = create(require('./User'));
     const mockVar = userMock.mockVar('age');
@@ -48,7 +55,20 @@ describe('RPCClient', function () {
     mockVar.callTimes(2).should.to.be.equal(3);
 
   });
+
   it('mock var has returned', () => {
+    const userMock = create(require('./User'));
+    const mockVar = userMock.mockVar('age');
+    query.getAge().should.to.be.equal(15);
+    mockVar.returned(17);
+    mockVar.returned(16);
+    query.getAge().should.to.be.equal(17);
+    query.getAge().should.to.be.equal(16);
+
+  });
+
+
+  it('mock var has returned higer than mock', () => {
     const userMock = create(require('./User'));
     const mockVar = userMock.mockVar('age');
     query.getAge().should.to.be.equal(15);
@@ -58,9 +78,6 @@ describe('RPCClient', function () {
     query.getAge().should.to.be.equal(17);
     query.getAge().should.to.be.equal(16);
     query.getAge().should.to.be.equal(18);
-    mockVar.restore();
-    query.getAge().should.to.be.equal(15);
-    mockVar.callTimes().should.to.be.equal(5);
 
   });
 
@@ -128,6 +145,9 @@ describe('RPCClient', function () {
     query.add('1', 'b').should.to.be.equal(100);
     query.add('1', 'b').should.to.be.equal(101);
     query.add('1', 'b').should.to.be.equal('hello');
+
+  });
+  it('test verifyOrder', () => {
 
   });
 
