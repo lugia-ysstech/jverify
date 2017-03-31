@@ -36,10 +36,17 @@ describe('MockModule', function () {
     const mock = create(obj).mockFunction('getValue');
 
     obj.getValue().should.to.be.equal(100);
-    mock.returned(100);
     mock.returned(101);
     mock.mock(() => 1000);
+    mock.restore();
+
+    // 状态还原
+    mock.queryCallArgs().should.to.be.eql([]);
+    mock.queryCallContext().should.to.be.eql([]);
+    mock.callTimes().should.to.be.equal(0);
+    // 模拟值还原
     obj.getValue().should.to.be.equal(100);
+
   });
 
 
@@ -115,12 +122,13 @@ describe('MockModule', function () {
     mockAdd.queryCallArgs()[ 0 ].should.to.be.equal(mockAdd.getCallArgs(0));
     mockAdd.queryCallArgs()[ 1 ].should.to.be.equal(mockAdd.getCallArgs(1));
   });
+
   it('test mock func verify CallContext', () => {
     const user = require('./User');
     const userMock = create(user);
     const mockAdd = userMock.mockFunction('add');
-    query.add(1, 2);
-    query.add(1, 2);
+    query.add();
+    query.add();
     mockAdd.mock(() => 10);
     mockAdd.queryCallContext()[ 0 ].should.to.be.equal(query);
     mockAdd.queryCallContext()[ 1 ].should.to.be.equal(query);
@@ -129,10 +137,38 @@ describe('MockModule', function () {
     // 指定context
     const ctx = { user: '111' };
     mockAdd.mock(() => 10, ctx);
-    query.add(1, 2);
-    mockAdd.queryCallContext()[ 0 ].should.to.be.equal(query);
+    query.add();
+    mockAdd.queryCallContext()[ 2 ].should.to.be.equal(ctx);
+
+    mockAdd.mock(() => 10);
+    query.add();
+    mockAdd.queryCallContext()[ 3 ].should.to.be.equal(query);
 
   });
+
+  it('test mock func verify CallContext context no use for returned', () => {
+    const user = {
+      add () {
+
+      },
+    };
+
+    const userMock = create(user);
+    const mockAdd = userMock.mockFunction('add');
+    const obj = {};
+
+    mockAdd.mock(() => 1, obj);
+    user.add();
+    mockAdd.getCallContext(0).should.to.be.equal(obj);
+    mockAdd.returned('hello');
+    mockAdd.returned('hello');
+    user.add();
+    user.add();
+    mockAdd.getCallContext(1).should.to.be.equal(obj);
+    mockAdd.getCallContext(2).should.to.be.equal(obj);
+  });
+
+
   it('test mock func has returned', () => {
     const userMock = create(require('./User'));
     const mockAdd = userMock.mockFunction('add');
