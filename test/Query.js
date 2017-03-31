@@ -7,8 +7,8 @@ module.exports = {
   getName () {
     return User.getName();
   },
-  add(a, b){
-    return User.add(a, b);
+  add (a, b) {
+    return User.add.bind(this)(a, b);
   },
   getAge () {
     return User.age;

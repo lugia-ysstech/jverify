@@ -32,16 +32,24 @@ declare module 'vx-mock' {
     /*
      * 设置桩函数
      */
-    mock(func: Function): void;
+    mock(func: Function, ctx?: Object): void;
 
     /*
      * 查询每一次调用对象的this上下文，以及入参，数组对应的顺序为调用的顺序
      */
     queryCallArgs(): Array<any>;
     /*
-     * 获取第index次的调用信息
+     * 获取第index次的调用参数信息
      */
     getCallArgs(index: number): Array<any>;
+    /*
+     * 查询每一次调用对象的this的上下文
+     */
+    queryCallContext(): Array<Object>;
+    /*
+     * 获取第index次的调用信息
+     */
+    getCallContext(index: number): any;
   }
 
   declare interface MockVarReulst extends BaseMockRequire {
@@ -70,6 +78,19 @@ declare module 'vx-mock' {
      * @modulePath mock模块的绝对地址，如果使用相对地址将无法正确加载模块
      */
     create(module: any): MockModule;
+  }
+
+  declare interface VerifyOrderInner {
+    addCallMock(mock: Object, callInfo: CallInfo): void;
+  }
+
+  declare type CallMock = {
+    mock: Object,
+    callArg: Array<any>,
+  }
+
+  declare interface VerifyOrder {
+    queryCallMock(): CallMock;
   }
 
 
