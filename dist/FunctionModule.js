@@ -2,15 +2,15 @@
  * Created by liguoxin on 2017/2/10.
  * @flow
  */
-/*:: import type { MockModule, MockModuleFuncReulst, MockVarReulst, VerifyOrder } from 'vx-mock';*/
+/*:: import type { MockModule, MockModuleFuncReulst, MockVarReulst, VerifyOrder.js } from 'vx-mock';*/
 
 
 class MockModuleImpl {
   /*:: target: any;*/
-  /*:: verifyOrder: ?VerifyOrder;*/
+  /*:: verifyOrder: ?VerifyOrder.js;*/
 
 
-  constructor(module /*: Object*/, verifyOrder /*:: ?: VerifyOrder*/) {
+  constructor(module /*: Object*/, verifyOrder /*:: ?: VerifyOrder.js*/) {
     if (!module) {
       throw new Error('module的目标路径不能空');
     }
@@ -120,7 +120,7 @@ class MockModuleImpl {
 }
 
 module.exports = {
-  create(module /*: any*/, verifyOrder /*:: ?: VerifyOrder*/) /*: MockModule*/ {
+  create(module /*: any*/, verifyOrder /*:: ?: VerifyOrder.js*/) /*: MockModule*/ {
     return new MockModuleImpl(module, verifyOrder);
   }
 };

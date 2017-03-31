@@ -153,4 +153,13 @@ describe('MockFunction', function () {
     mockFunction.queryCallContext().should.to.be.eql([]);
     mockFunction.callTimes().should.to.be.equal(0);
   });
+
+
+  it('if verifyOrder is notEmpty mockName must had', () => {
+    expect(() => {
+      create( null, {});
+    }).throw(Error, '开启VerifyOrder，mockName不能为空!');
+  });
+
+
 });

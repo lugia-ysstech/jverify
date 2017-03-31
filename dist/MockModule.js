@@ -8,13 +8,18 @@
 class MockModuleImpl {
   /*:: target: any;*/
   /*:: verifyOrder: ?VerifyOrder;*/
+  /*:: mockName: ?string;*/
 
 
-  constructor(module /*: Object*/, verifyOrder /*:: ?: VerifyOrder*/) {
+  constructor(module /*: Object*/, mockName /*: ?string*/, verifyOrder /*:: ?: VerifyOrder*/) {
     if (!module) {
       throw new Error('mock的目标对象不能为空!');
     }
+    if (verifyOrder && !mockName) {
+      throw new Error('开启VerifyOrder，mockName不能为空!');
+    }
     this.target = module;
+    this.mockName = mockName;
     this.verifyOrder = verifyOrder;
   }
 
@@ -135,7 +140,7 @@ class MockModuleImpl {
 }
 
 module.exports = {
-  create(module /*: any*/, verifyOrder /*:: ?: VerifyOrder*/) /*: MockModule*/ {
-    return new MockModuleImpl(module, verifyOrder);
+  create(module /*: any*/, mockName /*: ?string*/, verifyOrder /*:: ?: VerifyOrder*/) /*: MockModule*/ {
+    return new MockModuleImpl(module, mockName, verifyOrder);
   }
 };

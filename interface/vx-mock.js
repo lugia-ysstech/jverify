@@ -78,7 +78,7 @@ declare module 'vx-mock' {
      * 创建mock模块
      * @modulePath mock模块的绝对地址，如果使用相对地址将无法正确加载模块
      */
-    create(module: any, verifyOrder?: VerifyOrder): MockModule;
+    create(module: any, mockName: ?string, verifyOrder?: VerifyOrder): MockModule;
   }
 
   declare interface MockFunctionResult extends MockModuleFuncReulst {
@@ -90,18 +90,26 @@ declare module 'vx-mock' {
      * 创建mock模块
      * @modulePath mock模块的绝对地址，如果使用相对地址将无法正确加载模块
      */
-    create(func: Function, verifyOrder?: VerifyOrder): MockFunctionResult;
+    create(mockName: ?string, verifyOrder?: VerifyOrder): MockFunctionResult;
   }
 
 
+  declare type MockObj = {
+    name: string;
+    mock: Object;
+  };
+
   declare interface VerifyOrder {
 
-    addModuleCallFunction(mock: Object, funcName: string, callInfo: CallInfo): void;
+    addModuleCallFunction(mock: MockObj, funcName: string, callInfo: CallInfo): void;
     addModuleVar(mock: Object): void;
     addCallFunction(callInfo: CallInfo): void;
     verify(): void;
   }
 
+  declare interface VerifyOrderFactory {
+    create(): VerifyOrder;
+  }
 
   declare type ExportObj = {
     mockObject: ModuleMockFactory;

@@ -9,11 +9,15 @@ const MockModule = require('./MockModule');
 class MockFunctionImpl {
   /*:: target: Function;*/
   /*:: verifyOrder: ?VerifyOrder;*/
+  /*:: mockName: ?string;*/
 
 
-  constructor(func /*: Function*/ = () => {}, verifyOrder /*:: ?: VerifyOrder*/) {
-
-    this.target = func;
+  constructor(mockName /*: ?string*/, verifyOrder /*:: ?: VerifyOrder*/) {
+    if (verifyOrder && !mockName) {
+      throw new Error('开启VerifyOrder，mockName不能为空!');
+    }
+    this.target = () => {};
+    this.mockName = mockName;
     this.verifyOrder = verifyOrder;
   }
 
@@ -22,7 +26,7 @@ class MockFunctionImpl {
     const target = {
       [funcName]: this.target
     };
-    const mockModule = MockModule.create(target, this.verifyOrder ? this.verifyOrder : undefined);
+    const mockModule = MockModule.create(target, this.mockName, this.verifyOrder ? this.verifyOrder : undefined);
     const mockFunctionResult = mockModule.mockFunction(funcName);
 
     return {
@@ -60,7 +64,7 @@ class MockFunctionImpl {
 }
 
 module.exports = {
-  create(func /*: Function*/ = () => {}, verifyOrder /*:: ?: VerifyOrder*/) /*: MockFunctionResult*/ {
-    return new MockFunctionImpl(func, verifyOrder).createMockResult();
+  create(mockName /*: ?string*/, verifyOrder /*:: ?: VerifyOrder*/) /*: MockFunctionResult*/ {
+    return new MockFunctionImpl(mockName, verifyOrder).createMockResult();
   }
 };

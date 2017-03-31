@@ -182,7 +182,8 @@ describe('MockModule', function () {
     mockVar.mock(18);
     obj.age.should.to.be.equal(18);
 
-  }); it('mock var calltimes', () => {
+  });
+  it('mock var calltimes', () => {
     const obj = {
       age: 15,
     };
@@ -245,8 +246,13 @@ describe('MockModule', function () {
 
   });
 
-  it('test verifyOrder', () => {
 
+  it('if verifyOrder is notEmpty mockName must had', () => {
+    expect(() => {
+      create({}, null, {});
+    }).throw(Error, '开启VerifyOrder，mockName不能为空!');
   });
+
+
 
 });
