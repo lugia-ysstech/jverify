@@ -9,16 +9,25 @@
   VerifyOrderMockList,
   VerifyOrderMock,
   ModuleVarStatus,
+  OrderStep,
+  VerifyResult,
+  VerifyResultErrorInfo,
+  GenerateErrorFuncArg,
 } from 'vx-mock';*/
 
+
+const deepEqual = require('deep-equal');
+const { StringUtils } = require('vx-var-utils');
+const { pad } = StringUtils;
 const assert = require('assert');
 const Module_Func = 'module_func';
 const Module_Var = 'module_var';
 const Func = 'func';
+const FuncName = '____';
 
 class VerifyOrderImpl {
   /*:: mockNames: VerifyOrderMockList;*/
-  /*:: steps: Array<any>;*/
+  /*:: steps: Array<OrderStep>;*/
   /*:: moduleVar: ModuleVarStatus;*/
 
 
@@ -26,11 +35,12 @@ class VerifyOrderImpl {
     this.steps = [];
     this.mockNames = {};
     this.moduleVar = {};
+    return this;
   }
 
   addModuleCallFunction(mockName /*: string*/, funcName /*: string*/, callInfo /*: CallInfo*/) /*: void*/ {
 
-    this.checkMockName(mockName);
+    this.checkMockNameOnAdd(mockName);
 
     this.mockNames[mockName].push({
       name: funcName,
@@ -39,13 +49,14 @@ class VerifyOrderImpl {
 
     this.steps.push({
       mockName,
-      funcName,
-      callInfo
+      name: funcName,
+      callInfo,
+      type: Module_Func
     });
   }
 
   addModuleVar(mockName /*: string*/, attrName /*: string*/) /*: void*/ {
-    this.checkMockName(mockName);
+    this.checkMockNameOnAdd(mockName);
 
     this.mockNames[mockName].push({
       name: attrName,
@@ -54,90 +65,131 @@ class VerifyOrderImpl {
 
     this.steps.push({
       mockName,
-      attrName
+      name: attrName,
+      type: Module_Var
+
     });
   }
 
   addCallFunction(mockName /*: string*/, callInfo /*: CallInfo*/) /*: void*/ {
-    this.checkMockName(mockName);
+    this.checkMockNameOnAdd(mockName);
 
     this.mockNames[mockName].push({
       type: Func,
-      name: '__'
+      name: FuncName
     });
 
     this.steps.push({
+      name: FuncName,
       mockName,
-      callInfo
+      callInfo,
+      type: Func
     });
   }
 
-  checkMockName(mockName /*: string*/) {
+  checkMockNameOnAdd(mockName /*: string*/) {
+
     if (this.mockNames[mockName] === undefined) {
       this.mockNames[mockName] = [];
     }
   }
 
-  getMock() /*: any*/ {
+  getMock() {
 
-    const result = {};
+    const result = {},
+          verifyResult /*: VerifyResult*/ = { sucess: true, error: {} },
+          realyOrder = [];
+
     let index = 0;
-    Object.keys(this.mockNames).forEach(mockName => {
-      const mockInfoList /*: Array<VerifyOrderMock>*/ = this.mockNames[mockName],
-            self = this;
 
+    Object.keys(this.mockNames).forEach(expectMockName => {
+      const mockInfoList /*: Array<VerifyOrderMock>*/ = this.mockNames[expectMockName],
+            self = this;
       let value = {};
       mockInfoList.forEach(mockInfo => {
-        const { name, type } = mockInfo;
-        if (!name) {
+
+        const { name: expectName, type } = mockInfo;
+        if (!expectName) {
           return;
         }
+
         if (type === Module_Func) {
-          const funcName = name;
-          value[funcName] = (...callArgs) => {
+          value[expectName] = (...callArgs) => {
+
             const step = this.steps[index];
-            assert.equal(!!step, true, '超过指定步数');
-            assert.equal(step.mockName, mockName, '模块不匹配');
-            assert.equal(step.funcName, funcName, '方法不匹配');
-            const { callInfo } = step;
-            const { args, context } = callInfo;
-            assert.deepEqual(args, callArgs, '参数不匹配');
-            index++;
-            return {
-              withContext(ctx /*: any*/) {
-                assert.deepEqual(context, ctx, 'this绑定不匹配');
+            realyOrder.push({
+              mockName: expectMockName,
+              name: expectName,
+              type,
+              callInfo: {
+                args: callArgs
               }
+            });
+            if (!step) {
+              verifyResult.sucess = false;
+              verifyResult.error[index] = this.generateError({ stepError: true });
+              index++;
+              return {
+                withContext() {}
+              };
+            }
+
+            const { mockName, name, callInfo } = step;
+            let args;
+            if (callInfo) {
+              ({ args } = callInfo);
+            }
+
+            const mockNameIsEql = mockName === expectMockName;
+            const nameIsEql = name === expectName;
+            const argIsEql = this.isArgsEql(args, callArgs);
+            const checkResult = mockNameIsEql && nameIsEql && argIsEql;
+            if (checkResult === false) {
+              verifyResult.error[index] = this.generateError({ mockNameIsEql, nameIsEql, argIsEql });
+              verifyResult.sucess = false;
+            }
+
+            const withContextObj = {
+              withContext: this.withContext(callInfo, verifyResult, index, self)
             };
+            index++;
+            return withContextObj;
           };
         }
-        if (type === Module_Var) {
-          if (this.moduleVar[`${mockName}_${name}`] === undefined) {
 
-            this.moduleVar[`${mockName}_${name}`] = true;
-            Object.defineProperty(value, name, {
+        if (type === Module_Var) {
+          if (this.moduleVar[`${expectMockName}_${expectName}`] === undefined) {
+
+            this.moduleVar[`${expectMockName}_${expectName}`] = true;
+            Object.defineProperty(value, expectName, {
               get() {
                 const step = self.steps[index];
                 assert.equal(!!step, true, '超过指定步数');
-                assert.equal(step.mockName, mockName, '模块不匹配');
-                assert.equal(step.attrName, name, '属性不匹配');
+                assert.equal(step.mockName, expectMockName, '模块不匹配');
+                assert.equal(step.name, expectName, '属性不匹配');
                 index++;
                 return true;
               }
             });
           }
         }
+
         if (type === Func) {
 
-          value = function (...callArgs) {
-            const step = self.steps[index];
+          value = (...callArgs) => {
+            const step = this.steps[index];
             assert.equal(!!step, true, '超过指定步数');
-            assert.equal(step.mockName, mockName, '模块不匹配');
+            assert.equal(step.mockName, expectMockName, '模块不匹配');
+            let args, context;
+
             const { callInfo } = step;
-            const { args, context } = callInfo;
+            if (callInfo) {
+
+              ({ args, context } = callInfo);
+            }
             assert.deepEqual(callArgs, args, '参数不匹配');
             function withContext(context) {
               return function (ctx /*: any*/) {
-                console.info('aa');
                 assert.deepEqual(ctx, context, 'this绑定不匹配');
               };
             }
@@ -148,10 +200,115 @@ class VerifyOrderImpl {
             };
           };
         }
-        result[mockName] = value;
+        result[expectMockName] = value;
       });
+      result.__verify__ = () => {
+        if (verifyResult.sucess === false) {
+          throw Error('验证失败，左边为实际调用顺序，右边为期望调用顺序\n' + this.generateMsg(realyOrder, this.steps, verifyResult.error));
+        }
+      };
     });
 
+    return result;
+  }
+
+  verify(callback /*: Function*/) /*: void*/ {
+    const mock = this.getMock();
+    callback(mock);
+    mock.__verify__();
+  }
+
+  generateMsg(expectStep /*: Array<OrderStep>*/, actulyStep /*: Array<OrderStep>*/, error /*: VerifyResultErrorInfo*/) /*: string*/ {
+    let result /*: Array<string>*/ = [],
+        max /*: number*/ = 0;
+
+    function parseCallInfo(callInfo /*: CallInfo*/) /*: string*/ {
+      if (!callInfo) {
+        return '';
+      }
+      const rs /*: Array<string>*/ = [];
+      callInfo.args && callInfo.args.forEach(arg => {
+        rs.push(JSON.parse(arg));
+      });
+      return rs.join(', ');
+    }
+
+    function generateOneCall(stepObj /*: OrderStep*/) /*: string*/ {
+      const { name, mockName, callInfo } = stepObj;
+      return `${mockName}${name !== FuncName ? '.' + name : ''}(${callInfo ? parseCallInfo(callInfo) : ''});`;
+    }
+
+    actulyStep.forEach((step /*: OrderStep*/, i /*: number*/) => {
+      const item = `${i + 1}.  ${generateOneCall(step)}`;
+      max = Math.max(item.length, max);
+      result.push(item);
+    });
+
+    const maxLen /*: number*/ = Math.max(expectStep.length, actulyStep.length);
+    if (maxLen === expectStep.length) {
+      for (let i /*: number*/ = actulyStep.length; i < maxLen; i++) {
+        result.push(`${i + 1}.`);
+      }
+    }
+
+    result = result.map((item /*: string*/) => {
+      return pad({ str: item, len: max });
+    });
+
+    expectStep.forEach((step /*: OrderStep*/, i /*: number*/) => {
+      const item = generateOneCall(step);
+      result[i] += `   ${item}`;
+    });
+
+    for (let i /*: number*/ = 0; i < maxLen; i++) {
+      const msg = error[i];
+      if (msg && msg.length > 0) {
+        result[i] += `  <-- ${msg.join(' & ')} is error`;
+      }
+    }
+    console.info(error);
+    return result.join('\n');
+  }
+
+  isArgsEql(args, callArgs) {
+
+    return deepEqual(args, callArgs);
+  }
+
+  withContext(callInfo /*:: ?: CallInfo*/, verifyResult /*: VerifyResult*/, index /*: number*/, self /*: VerifyOrderImpl*/) {
+    if (callInfo) {
+      const { context } = callInfo;
+      return function (ctx /*: any*/) {
+        const ctxIsEql /*: boolean*/ = ctx === context;
+        if (ctxIsEql === false) {
+          verifyResult.sucess = false;
+          const oldError /*: Array<string>*/ = verifyResult.error[index];
+          const ctxError = self.generateError({ ctxIsEql });
+          if (oldError && oldError.length > 0) {
+            Array.prototype.push.apply(oldError, ctxError);
+          } else {
+            verifyResult.error[index] = self.generateError({ ctxIsEql });
+          }
+        }
+      };
+    }
+    return () => {};
+  }
+
+  generateError({ mockNameIsEql = true, nameIsEql = true, argIsEql = true, stepError = false } /*: GenerateErrorFuncArg*/) /*: Array<string>*/ {
+    const result /*: Array<string>*/ = [];
+    if (mockNameIsEql === false) {
+      result.push('module');
+    }
+    if (nameIsEql === false) {
+      result.push('name');
+    }
+    if (argIsEql === false) {
+      result.push('args');
+    }
+    if (stepError === true) {
+      result.push('step');
+    }
     return result;
   }
 }

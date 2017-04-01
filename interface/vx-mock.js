@@ -23,7 +23,7 @@ declare module 'vx-mock' {
   }
 
   declare type CallInfo = {
-    context: Object,
+    context?: Object,
     args: Array<any>
   }
 
@@ -84,7 +84,7 @@ declare module 'vx-mock' {
      * 创建mock模块
      * @modulePath mock模块的绝对地址，如果使用相对地址将无法正确加载模块
      */
-    create(module: any, mockName: ?string, verifyOrder?: VerifyOrder): MockModule;
+    create(module: any, mockName?: string, verifyOrder?: VerifyOrder): MockModule;
   }
 
   declare interface MockFunctionResult extends MockFuncCommonResult {
@@ -96,12 +96,18 @@ declare module 'vx-mock' {
      * 创建mock模块
      * @modulePath mock模块的绝对地址，如果使用相对地址将无法正确加载模块
      */
-    create(mockName: ?string, verifyOrder?: VerifyOrder): MockFunctionResult;
+    create(mockName?: string, verifyOrder?: VerifyOrder): MockFunctionResult;
   }
 
   declare type MockType = 'func' | 'module_func' | 'module_var'
   declare type VerifyOrderMock = {
-    name: ?string;
+    name?: string;
+    type: MockType
+  }
+  declare type OrderStep = {
+    name: string;
+    mockName: string;
+    callInfo?: CallInfo;
     type: MockType
   }
   declare type VerifyOrderMockList = { [key: string]: Array<VerifyOrderMock>; }
@@ -112,17 +118,28 @@ declare module 'vx-mock' {
     addModuleCallFunction(mockName: string, funcName: string, callInfo: CallInfo): void;
     addModuleVar(mockName: string, attrName: string): void;
     addCallFunction(mockName: string, callInfo: CallInfo): void;
-    getMock(): any;
+    verify(callback: Function): void;
   }
 
 
   declare interface VerifyOrderFactory {
     create(): VerifyOrder;
   }
+  declare type VerifyResultErrorInfo = { [key: number]: Array<string> };
+  declare type VerifyResult = {|
+    sucess: boolean;
+    error: VerifyResultErrorInfo;
+  |}
   declare type ExportObj = {
     mockObject: ModuleMockFactory;
     mockFunction: MockFunctionFactory;
   }
 
+  declare type GenerateErrorFuncArg = {
+    mockNameIsEql?: boolean;
+    nameIsEql?: boolean;
+    argIsEql?: boolean;
+    stepError?: boolean;
+  }
   declare module.exports: ExportObj
 }
