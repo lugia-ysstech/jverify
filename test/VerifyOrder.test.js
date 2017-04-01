@@ -73,12 +73,12 @@ describe('MockModule', function () {
       });
 
     } catch (err) {
-
+      console.info(err);
       err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);           a.af1(1);
-2.  a.af1(1, 4);        a.af1(1);
+2.  a.af1(1, 4);        a.af1(1);  <-- args is error
 3.  b.bf1(1, 2);        b.bf1(1, 2);
-4.  c 1.cf1(1, 2, 3);   c 1.cf1(1, 2, 3);`);
+4.  c 1.cf1(1, 2, 3);   c 1.cf1(1, 2, 3);  <-- context is error`);
       return;
     }
     assert.isOk(false, '未正取识别错误顺序');
@@ -97,14 +97,35 @@ describe('MockModule', function () {
       });
 
     } catch (err) {
-    console.info(err);
+      console.info(err);
       err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);           a.af1(1);
 2.  a.af1(1, 4);        a.af1(1);  <-- args is error
 3.  b.bf1(1, 2);        b.bf1(1, 2);
-4.  c 1.cf1(1, 2, 3);   b.bf1(1, 3);  <-- module & name & args is error
+4.  c 1.cf1(1, 2, 3);   b.bf1(1, 3);  <-- module & name & args & context is error
 5.                      b.bf1(1, 4);  <-- step is error
 6.                      c 1.cf1(1, 2, 3);  <-- step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+  it('test addModuleCallFunction error  expected is less then actuly', () => {
+    const { A, B, order } = mock();
+    try {
+      order.verify(obj => {
+        const { a, b } = obj;
+        a.af1(1).withContext(A);
+        a.af1(1, 2).withContext(B);
+        b.bf1(1, 4).withContext(A);
+      });
+
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.af1(1);           a.af1(1);
+2.  a.af1(1, 4);        a.af1(1, 2);  <-- args & context is error
+3.  b.bf1(1, 2);        b.bf1(1, 4);  <-- args & context is error
+4.  c 1.cf1(1, 2, 3);  <-- step is error`);
       return;
     }
     assert.isOk(false, '未正取识别错误顺序');

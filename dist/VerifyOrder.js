@@ -249,8 +249,11 @@ class VerifyOrderImpl {
       for (let i /*: number*/ = actulyStep.length; i < maxLen; i++) {
         result.push(`${i + 1}.`);
       }
+    } else {
+      for (let i /*: number*/ = expectStep.length; i < maxLen; i++) {
+        error[i] = this.generateError({ stepError: true });
+      }
     }
-
     result = result.map((item /*: string*/) => {
       return pad({ str: item, len: max });
     });
@@ -295,7 +298,7 @@ class VerifyOrderImpl {
     return () => {};
   }
 
-  generateError({ mockNameIsEql = true, nameIsEql = true, argIsEql = true, stepError = false } /*: GenerateErrorFuncArg*/) /*: Array<string>*/ {
+  generateError({ ctxIsEql = true, mockNameIsEql = true, nameIsEql = true, argIsEql = true, stepError = false } /*: GenerateErrorFuncArg*/) /*: Array<string>*/ {
     const result /*: Array<string>*/ = [];
     if (mockNameIsEql === false) {
       result.push('module');
@@ -305,6 +308,9 @@ class VerifyOrderImpl {
     }
     if (argIsEql === false) {
       result.push('args');
+    }
+    if (ctxIsEql === false) {
+      result.push('context');
     }
     if (stepError === true) {
       result.push('step');

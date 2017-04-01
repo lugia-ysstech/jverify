@@ -140,6 +140,7 @@ declare module 'vx-mock' {
     nameIsEql?: boolean;
     argIsEql?: boolean;
     stepError?: boolean;
+    ctxIsEql?: boolean;
   }
   declare module.exports: ExportObj
 }
