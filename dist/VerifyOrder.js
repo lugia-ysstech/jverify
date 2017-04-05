@@ -98,7 +98,7 @@ class VerifyOrderImpl {
 
     const result = {},
           verifyResult /*: VerifyResult*/ = { sucess: true, error: {} },
-          realyOrder = [];
+          realyOrder /*: Array<OrderStep>*/ = [];
 
     let index = 0;
 
@@ -202,8 +202,12 @@ class VerifyOrderImpl {
         }
         result[expectMockName] = value;
       });
-      result.__verify__ = () => {
+      result.__verify__ = err => {
         if (verifyResult.sucess === false) {
+          throw Error('验证失败，左边为实际调用顺序，右边为期望调用顺序\n' + this.generateMsg(realyOrder, this.steps, verifyResult.error));
+        }
+        if (err) {
+          verifyResult.error[realyOrder.length] = [err.message];
           throw Error('验证失败，左边为实际调用顺序，右边为期望调用顺序\n' + this.generateMsg(realyOrder, this.steps, verifyResult.error));
         }
       };
@@ -214,7 +218,12 @@ class VerifyOrderImpl {
 
   verify(callback /*: Function*/) /*: void*/ {
     const mock = this.getMock();
-    callback(mock);
+    try {
+      callback(mock);
+    } catch (err) {
+      mock.__verify__(err);
+      return;
+    }
     mock.__verify__();
   }
 
@@ -235,6 +244,7 @@ class VerifyOrderImpl {
 
     function generateOneCall(stepObj /*: OrderStep*/) /*: string*/ {
       const { name, mockName, callInfo } = stepObj;
+
       return `${mockName}${name !== FuncName ? '.' + name : ''}(${callInfo ? parseCallInfo(callInfo) : ''});`;
     }
 
@@ -251,7 +261,12 @@ class VerifyOrderImpl {
       }
     } else {
       for (let i /*: number*/ = expectStep.length; i < maxLen; i++) {
-        error[i] = this.generateError({ stepError: true });
+        const stepError = this.generateError({ stepError: true });
+        if (error[i]) {
+          Array.prototype.push.apply(error[i], stepError);
+        } else {
+          error[i] = stepError;
+        }
       }
     }
     result = result.map((item /*: string*/) => {
@@ -269,7 +284,6 @@ class VerifyOrderImpl {
         result[i] += `  <-- ${msg.join(' & ')} is error`;
       }
     }
-    console.info(error);
     return result.join('\n');
   }
 

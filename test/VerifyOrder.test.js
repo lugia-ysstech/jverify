@@ -8,23 +8,7 @@ const { expect, assert } = chai;
 
 
 describe('MockModule', function () {
-  // 考虑入参为空的情况
-  // 通过 verify  进行结果校验。
-  // 如果通过则返回true
-  // 不通过则
-  it('test mock name can not set "verify"', () => {
-    // const order = create();
-    // const errmsg = 'verify为内部约定名称，请替换为其他mock名称';
-    // expect(() => {
-    //   order.addModuleCallFunction('verify');
-    // }).throws(Error, errmsg);
-    // expect(() => {
-    //   order.addModuleVar('verify');
-    // }).throws(Error, errmsg);
-    // expect(() => {
-    //   order.addCallFunction('verify');
-    // }).throws(Error, errmsg);
-  });
+
 
   /*
    a.af1(1);
@@ -33,7 +17,7 @@ describe('MockModule', function () {
    c 1.cf1(1, 2, 3);
 
    */
-  function mock () {
+  function mockModuleFunc () {
     const order = create();
     const A = {},
       B = {},
@@ -61,8 +45,31 @@ describe('MockModule', function () {
     return { order, A, B, C };
   }
 
+  /*
+   a.a1;
+   a.a2;
+   b.b1;
+   b.b2;
+   c.c1;
+   b.b3;
+
+   */
+  function mockModuleVar () {
+    const order = create();
+
+
+    order.addModuleVar('a', 'a1');
+    order.addModuleVar('a', 'a2');
+    order.addModuleVar('b', 'b1');
+    order.addModuleVar('b', 'b2');
+    order.addModuleVar('c', 'c1');
+    order.addModuleVar('b', 'b3');
+
+    return { order };
+  }
+
   it('test addModuleCallFunction error  step is same', () => {
-    const { A, B, order } = mock();
+    const { A, B, order } = mockModuleFunc();
     try {
       order.verify(obj => {
         const { a, b } = obj;
@@ -84,7 +91,7 @@ describe('MockModule', function () {
     assert.isOk(false, '未正取识别错误顺序');
   });
   it('test addModuleCallFunction error  expected is more then actuly', () => {
-    const { A, B, order } = mock();
+    const { A, B, order } = mockModuleFunc();
     try {
       order.verify(obj => {
         const { a, b } = obj;
@@ -109,8 +116,116 @@ describe('MockModule', function () {
     }
     assert.isOk(false, '未正取识别错误顺序');
   });
+
+  it('test addModuleCallFunction error  func is undefined on 1 number line', () => {
+    const { order } = mockModuleFunc();
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.dd();
+      });
+
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.af1(1);          <-- a.dd is not a function & step is error
+2.  a.af1(1, 4);       <-- step is error
+3.  b.bf1(1, 2);       <-- step is error
+4.  c 1.cf1(1, 2, 3);  <-- step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
+  it('test addModuleCallFunction error  func is undefined before is error', () => {
+    const { order } = mockModuleFunc();
+    try {
+      order.verify(obj => {
+        const { a, b } = obj;
+        a.af1(1);
+        a.af1(1, 4);
+        b.bf1(2, 3);
+        obj[ 'c 1' ].a(1, 2, 3);
+      });
+
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.af1(1);           a.af1(1);
+2.  a.af1(1, 4);        a.af1(1, 4);
+3.  b.bf1(1, 2);        b.bf1(2, 3);  <-- args is error
+4.  c 1.cf1(1, 2, 3);  <-- step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+  it('test addModuleCallFunction error  func is undefined on last line', () => {
+    const { order } = mockModuleFunc();
+    try {
+      order.verify(obj => {
+        const { a, b } = obj;
+        a.af1(1);
+        a.af1(1, 4);
+        b.bf1(1, 2);
+        obj[ 'c 1' ].a(1, 2, 3);
+      });
+
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.af1(1);           a.af1(1);
+2.  a.af1(1, 4);        a.af1(1, 4);
+3.  b.bf1(1, 2);        b.bf1(1, 2);
+4.  c 1.cf1(1, 2, 3);  <-- obj.c 1.a is not a function & step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+  it('test addModuleCallFunction error  func is undefined on 3 number line', () => {
+    const { order } = mockModuleFunc();
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.af1(1);
+        a.af1(1, 4);
+        b.aaa();
+        obj[ 'c 1' ].cf1(1, 2, 3);
+      });
+
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.af1(1);           a.af1(1);
+2.  a.af1(1, 4);        a.af1(1, 4);
+3.  b.bf1(1, 2);       <-- b is not defined & step is error
+4.  c 1.cf1(1, 2, 3);  <-- step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
   it('test addModuleCallFunction error  expected is less then actuly', () => {
-    const { A, B, order } = mock();
+    //     const { order } = mockModuleVar();
+    //     try {
+    //       order.verify(obj => {
+    //         const { a, b,c } = obj;
+    //         a.a1;
+    //       });
+    //
+    //     } catch (err) {
+    //       console.info(err);
+    //       err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+    // 1.  a.af1(1);           a.af1(1);
+    // 2.  a.af1(1, 4);        a.af1(1, 2);  <-- args & context is error
+    // 3.  b.bf1(1, 2);        b.bf1(1, 4);  <-- args & context is error
+    // 4.  c 1.cf1(1, 2, 3);  <-- step is error`);
+    //       return;
+    //     }
+    //     assert.isOk(false, '未正取识别错误顺序');
+  });
+
+  it('test addModuleVar error  expected is less then actuly', () => {
+    const { A, B, order } = mockModuleFunc();
     try {
       order.verify(obj => {
         const { a, b } = obj;
