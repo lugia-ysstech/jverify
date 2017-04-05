@@ -230,7 +230,7 @@ class VerifyOrderImpl {
         } else {
           result[expectMockName] = new Proxy(value, {
             get(target, props) {
-              if (!target.hasOwnProperty(props)) {
+              if (!target[props]) {
                 throw new Error(`${expectMockName}.${props} is undefined`);
               }
               return value[props];
