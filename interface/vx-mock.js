@@ -142,5 +142,6 @@ declare module 'vx-mock' {
     stepError?: boolean;
     ctxIsEql?: boolean;
   }
+  declare type VarNameObserve = { [key: string]: boolean };
   declare module.exports: ExportObj
 }

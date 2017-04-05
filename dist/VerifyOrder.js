@@ -13,6 +13,7 @@
   VerifyResult,
   VerifyResultErrorInfo,
   GenerateErrorFuncArg,
+  VarNameObserve,
 } from 'vx-mock';*/
 
 
@@ -29,12 +30,14 @@ class VerifyOrderImpl {
   /*:: mockNames: VerifyOrderMockList;*/
   /*:: steps: Array<OrderStep>;*/
   /*:: moduleVar: ModuleVarStatus;*/
+  /*:: varNameObserve: VarNameObserve;*/
 
 
   constructor() {
     this.steps = [];
     this.mockNames = {};
     this.moduleVar = {};
+    this.varNameObserve = {};
     return this;
   }
 
@@ -106,6 +109,7 @@ class VerifyOrderImpl {
       const mockInfoList /*: Array<VerifyOrderMock>*/ = this.mockNames[expectMockName],
             self = this;
       let value = {};
+
       mockInfoList.forEach(mockInfo => {
 
         const { name: expectName, type } = mockInfo;
@@ -158,15 +162,36 @@ class VerifyOrderImpl {
         }
 
         if (type === Module_Var) {
+
           if (this.moduleVar[`${expectMockName}_${expectName}`] === undefined) {
 
             this.moduleVar[`${expectMockName}_${expectName}`] = true;
+
             Object.defineProperty(value, expectName, {
               get() {
+                debugger;
+
                 const step = self.steps[index];
-                assert.equal(!!step, true, '超过指定步数');
-                assert.equal(step.mockName, expectMockName, '模块不匹配');
-                assert.equal(step.name, expectName, '属性不匹配');
+                realyOrder.push({
+                  mockName: expectMockName,
+                  name: expectName,
+                  type
+                });
+                if (!step) {
+                  verifyResult.sucess = false;
+                  verifyResult.error[index] = self.generateError({ stepError: true });
+                  index++;
+                  return true;
+                }
+                const { mockName, name } = step;
+
+                const mockNameIsEql = mockName === expectMockName;
+                const nameIsEql = name === expectName;
+                const checkResult = mockNameIsEql && nameIsEql;
+                if (checkResult === false) {
+                  verifyResult.error[index] = self.generateError({ mockNameIsEql, nameIsEql });
+                  verifyResult.sucess = false;
+                }
                 index++;
                 return true;
               }
@@ -200,15 +225,27 @@ class VerifyOrderImpl {
             };
           };
         }
-        result[expectMockName] = value;
+        if (type === Func) {
+          result[expectMockName] = value;
+        } else {
+          result[expectMockName] = new Proxy(value, {
+            get(target, props) {
+              if (!target.hasOwnProperty(props)) {
+                throw new Error(`${expectMockName}.${props} is undefined`);
+              }
+              return value[props];
+            }
+          });
+        }
       });
       result.__verify__ = err => {
-        if (verifyResult.sucess === false) {
-          throw Error('验证失败，左边为实际调用顺序，右边为期望调用顺序\n' + this.generateMsg(realyOrder, this.steps, verifyResult.error));
-        }
         if (err) {
           verifyResult.error[realyOrder.length] = [err.message];
           throw Error('验证失败，左边为实际调用顺序，右边为期望调用顺序\n' + this.generateMsg(realyOrder, this.steps, verifyResult.error));
+        } else {
+          if (verifyResult.sucess === false || realyOrder.length !== this.steps.length) {
+            throw Error('验证失败，左边为实际调用顺序，右边为期望调用顺序\n' + this.generateMsg(realyOrder, this.steps, verifyResult.error));
+          }
         }
       };
     });
@@ -243,9 +280,17 @@ class VerifyOrderImpl {
     }
 
     function generateOneCall(stepObj /*: OrderStep*/) /*: string*/ {
-      const { name, mockName, callInfo } = stepObj;
-
-      return `${mockName}${name !== FuncName ? '.' + name : ''}(${callInfo ? parseCallInfo(callInfo) : ''});`;
+      const { name, mockName, callInfo, type } = stepObj;
+      switch (type) {
+        case Module_Func:
+          return `${mockName}.${name}(${callInfo ? parseCallInfo(callInfo) : ''});`;
+        case Func:
+          return `${mockName}(${callInfo ? parseCallInfo(callInfo) : ''});`;
+        case Module_Var:
+          return `${mockName}${name !== FuncName ? '.' + name : ''};`;
+        default:
+          return '';
+      }
     }
 
     actulyStep.forEach((step /*: OrderStep*/, i /*: number*/) => {
