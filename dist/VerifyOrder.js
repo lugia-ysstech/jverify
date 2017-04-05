@@ -169,7 +169,6 @@ class VerifyOrderImpl {
 
             Object.defineProperty(value, expectName, {
               get() {
-                debugger;
 
                 const step = self.steps[index];
                 realyOrder.push({
@@ -230,7 +229,7 @@ class VerifyOrderImpl {
         } else {
           result[expectMockName] = new Proxy(value, {
             get(target, props) {
-              if (!target[props]) {
+              if (!target.hasOwnProperty(props)) {
                 throw new Error(`${expectMockName}.${props} is undefined`);
               }
               return value[props];

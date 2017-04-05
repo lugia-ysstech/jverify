@@ -118,3 +118,6 @@ mockFunction.restore();
 console.info('方法调用次数', mockFunction.callTimes());
 
 ```
+##VerifyOrder
+用于进行mock对象之间顺序，以及方法mock对象的入参、this引用的检查。并给出响应错误信息的提示。
+注意：当第3个步骤出错后，不会再去检查第3步骤后的相关步骤的具体错误。因为，实际开发过程中，也是对错误的不够逐一进行调整。
