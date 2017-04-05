@@ -137,7 +137,7 @@ describe('MockModule', function () {
     assert.isOk(false, '未正取识别错误顺序');
   });
 
-  it('test addModuleCallFunction error  func is undefined before is error', () => {
+  it('test addModuleCallFunction error  func is undefined before  error', () => {
     const { order } = mockModuleFunc();
     try {
       order.verify(obj => {
@@ -160,6 +160,30 @@ describe('MockModule', function () {
     }
     assert.isOk(false, '未正取识别错误顺序');
   });
+
+  it('test addModuleCallFunction error  has undefined error before right mock visitr', () => {
+    const { order } = mockModuleFunc();
+    try {
+      order.verify(obj => {
+        const { a, b } = obj;
+        a.af1(1);
+        a.af1(1, 4);
+        b.bf21(2, 3);
+        obj[ 'c 1' ].c1(1, 2, 3);
+      });
+
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.af1(1);           a.af1(1);
+2.  a.af1(1, 4);        a.af1(1, 4);
+3.  b.bf1(1, 2);       <-- b.bf21 is undefined & step is error
+4.  c 1.cf1(1, 2, 3);  <-- step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
   it('test addModuleCallFunction error  func is undefined on last line', () => {
     const { order } = mockModuleFunc();
     try {
@@ -241,6 +265,29 @@ describe('MockModule', function () {
     }
     assert.isOk(false, '未正取识别错误顺序');
   });
+  it('test addModuleVar error has undefined error before right mock visit', () => {
+    const { order } = mockModuleVar();
+    try {
+      order.verify((obj) => {
+        const { a, b } = obj;
+        a.a1;
+        a.a2;
+        b.b33;
+        b.a2;
+      });
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.a1;    a.a1;
+2.  a.a2;    a.a2;
+3.  b.a1;   <-- b.b33 is undefined & step is error
+4.  b.b2;   <-- step is error
+5.  c.c1;   <-- step is error
+6.  b.b31;  <-- step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
 
   it('test addModuleVar error  expected is less then actuly line 1 is error', () => {
     const { order } = mockModuleVar();
@@ -302,6 +349,7 @@ describe('MockModule', function () {
     }
     assert.isOk(false, '未正取识别错误顺序');
   });
+
   it('test addModuleVar a.f3 is undefined', () => {
     const { order } = mockModuleVar();
     try {
