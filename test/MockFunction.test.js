@@ -13,7 +13,7 @@ describe('MockFunction', function () {
 
   it('test mock function callTimes', () => {
 
-    const mockFunction = create(() => 100);
+    const mockFunction = create();
 
     const targetFunc = mockFunction.getFunction();
     targetFunc();
@@ -49,7 +49,7 @@ describe('MockFunction', function () {
 
   it('test mock function returned higher mock', () => {
 
-    const mockFunction = create(() => 100);
+    const mockFunction = create();
     const targetFunc = mockFunction.getFunction();
     mockFunction.returned(1);
     mockFunction.returned(2);
@@ -93,11 +93,8 @@ describe('MockFunction', function () {
 
   it('test mock function queryCallContext', () => {
 
-    const func = function () {
-
-    };
     const obj = {};
-    const mockFunction = create(func);
+    const mockFunction = create();
     const targetFunc = mockFunction.getFunction();
     targetFunc.call(obj);
 
@@ -157,8 +154,23 @@ describe('MockFunction', function () {
 
   it('if verifyOrder is notEmpty mockName must had', () => {
     expect(() => {
-      create(null, {});
+      create({ mockName: null, verifyOrder: {} });
     }).throw(Error, '开启VerifyOrder，mockName不能为空!');
+  });
+  it('mock f1 has call addCallFunction', done => {
+
+
+    const mockObj = create({
+      mockName: 'a', verifyOrder: {
+        addCallFunction (mockName) {
+          mockName.should.to.be.equal('a');
+          done();
+        },
+      },
+    });
+
+    mockObj.getFunction()();
+
   });
 
 

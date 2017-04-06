@@ -78,13 +78,16 @@ declare module 'vx-mock' {
     mockVar(varName: string): MockVarReulst;
   }
 
-
+  declare type VerifyOrderConfig = {
+    mockName: string;
+    verifyOrder: VerifyOrder;
+  }
   declare interface ModuleMockFactory {
     /*
      * 创建mock模块
      * @modulePath mock模块的绝对地址，如果使用相对地址将无法正确加载模块
      */
-    create(module: any, mockName?: string, verifyOrder?: VerifyOrder): MockModule;
+    create(module: any, orderConfig?: VerifyOrderConfig): MockModule;
   }
 
   declare interface MockFunctionResult extends MockFuncCommonResult {
@@ -96,7 +99,7 @@ declare module 'vx-mock' {
      * 创建mock模块
      * @modulePath mock模块的绝对地址，如果使用相对地址将无法正确加载模块
      */
-    create(mockName?: string, verifyOrder?: VerifyOrder): MockFunctionResult;
+    create(orderConfig?: VerifyOrderConfig): MockFunctionResult;
   }
 
   declare type MockType = 'func' | 'module_func' | 'module_var'

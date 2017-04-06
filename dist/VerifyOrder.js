@@ -97,13 +97,14 @@ class VerifyOrderImpl {
   }
 
   getMock() {
+    this.moduleVar = {};
 
     const result = {},
           verifyResult /*: VerifyResult*/ = { sucess: true, error: {} },
           realyOrder /*: Array<OrderStep>*/ = [];
 
     let index = 0;
-    this.moduleVar = {};
+
     Object.keys(this.mockNames).forEach(expectMockName => {
       const mockInfoList /*: Array<VerifyOrderMock>*/ = this.mockNames[expectMockName],
             self = this;

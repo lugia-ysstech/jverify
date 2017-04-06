@@ -4,10 +4,10 @@
 const chai = require('chai');
 const { create } = require('../dist/VerifyOrder');
 chai.should();
-const { expect, assert } = chai;
+const { assert } = chai;
 
 
-describe('MockModule', function () {
+describe('VerifyOrder', function () {
 
 
   /*
@@ -232,10 +232,10 @@ describe('MockModule', function () {
     const { order } = mockModuleFunc();
     try {
       order.verify(obj => {
-        const { a } = obj;
+        const { a, ddd } = obj;
         a.af1(1);
         a.af1(1, 4);
-        b.aaa();
+        ddd.aaa();
         obj[ 'c 1' ].cf1(1, 2, 3);
       });
 
@@ -244,7 +244,7 @@ describe('MockModule', function () {
       err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);           a.af1(1);
 2.  a.af1(1, 4);        a.af1(1, 4);
-3.  b.bf1(1, 2);       <-- b is not defined & step is error
+3.  b.bf1(1, 2);       <-- Cannot read property 'aaa' of undefined & step is error
 4.  c 1.cf1(1, 2, 3);  <-- step is error`);
       return;
     }
@@ -253,7 +253,7 @@ describe('MockModule', function () {
   it('test addModuleCallFunction no any func called', () => {
     const { order } = mockModuleFunc();
     try {
-      order.verify(obj => {
+      order.verify(() => {
       });
 
     } catch (err) {
@@ -355,13 +355,13 @@ describe('MockModule', function () {
     const { order } = mockModuleVar();
     try {
       order.verify(obj => {
-        const { a } = obj;
-        b.a1;
+        const { b } = obj;
+        b.a21;
       });
     } catch (err) {
       console.info(err);
       err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
-1.  a.a1;   <-- b is not defined & step is error
+1.  a.a1;   <-- b.a21 is undefined & step is error
 2.  a.a2;   <-- step is error
 3.  b.a1;   <-- step is error
 4.  b.b2;   <-- step is error

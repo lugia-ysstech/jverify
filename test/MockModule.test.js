@@ -276,7 +276,47 @@ describe('MockModule', function () {
 
   it('if verifyOrder is notEmpty mockName must had', () => {
     expect(() => {
-      create({}, null, {});
+      create({}, { mockName: null, verifyOrder: {} });
     }).throw(Error, '开启VerifyOrder，mockName不能为空!');
   });
+
+  it('mock obj.v has call addModuleVar', done => {
+
+    const target = { v: '111' };
+
+    const mockObj = create(target, {
+      mockName: 'a', verifyOrder: {
+        addModuleVar (mockName, attrName) {
+          mockName.should.to.be.equal('a');
+          attrName.should.to.be.equal('v');
+          done();
+        },
+      },
+    });
+    mockObj.mockVar('v');
+
+    target.v;
+
+  });
+
+  it('mock obj.func has call addModuleCallFunction', done => {
+
+    const target = { f1 () {} };
+
+    const mockObj = create(target, {
+      mockName: 'a', verifyOrder: {
+        addModuleCallFunction (mockName, attrName) {
+          mockName.should.to.be.equal('a');
+          attrName.should.to.be.equal('f1');
+          done();
+        },
+      },
+    });
+    mockObj.mockFunction('f1');
+
+    target.f1();
+
+  });
+
+
 });
