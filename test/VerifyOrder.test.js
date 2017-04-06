@@ -90,6 +90,28 @@ describe('MockModule', function () {
     }
     assert.isOk(false, '未正取识别错误顺序');
   });
+  it('test addModuleCallFunction for param type', () => {
+    const order = create(),
+      A = { a: '1' };
+    order.addModuleCallFunction('a', 'f1', {
+      context: A,
+      args: [ 1, false, 'hello', [ 1, 2, 3 ], { a: 'a', b: [ 1, 2, 3 ] } ],
+    });
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.af1(1).withContext(A);
+      });
+
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1(1, false, "hello", [1,2,3], {"a":"a","b":[1,2,3]});  <-- a.af1 is undefined & step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
   it('test addModuleCallFunction error  expected is more then actuly', () => {
     const { A, B, order } = mockModuleFunc();
     try {
@@ -268,7 +290,7 @@ describe('MockModule', function () {
   it('test addModuleVar error has undefined error before right mock visit', () => {
     const { order } = mockModuleVar();
     try {
-      order.verify((obj) => {
+      order.verify(obj => {
         const { a, b } = obj;
         a.a1;
         a.a2;
@@ -395,5 +417,225 @@ describe('MockModule', function () {
     assert.isOk(false, '未正取识别错误顺序');
   });
 
+  function mockFunction () {
+    const order = create(),
+      A = {},
+      B = {},
+      C = {};
+
+    order.addCallFunction('a', { context: A, args: [ 1, 2 ] });
+    order.addCallFunction('a', { context: A, args: [ 'hello', false ] });
+    order.addCallFunction('b', { context: B, args: [ [ 1, 2, 3 ], { a: '1', b: [ 4, 5, 6 ] } ] });
+    order.addCallFunction('c', { context: C, args: [ 6, 7 ] });
+    order.addCallFunction('b', { context: B, args: [ 'hello' ] });
+    return { order, A, B, C };
+  }
+
+
+  it('test addCallFunction call sucess', () => {
+    const { order } = mockFunction();
+    order.verify(obj => {
+      const { a, b, c } = obj;
+      a(1, 2);
+      a('hello', false);
+      b([ 1, 2, 3 ], { a: '1', b: [ 4, 5, 6 ] });
+      c(6, 7);
+      b('hello');
+    });
+  });
+
+  it('test addCallFunction call sucess with Context', () => {
+    const { order, A, B, C } = mockFunction();
+    order.verify(obj => {
+      const { a, b, c } = obj;
+      a(1, 2).withContext(A);
+      a('hello', false).withContext(A);
+      b([ 1, 2, 3 ], { a: '1', b: [ 4, 5, 6 ] }).withContext(B);
+      c(6, 7).withContext(C);
+      b('hello').withContext(B);
+    });
+  });
+
+  it('test addCallFunction call error expect more than actual', () => {
+    const { order } = mockFunction();
+    try {
+
+      order.verify(obj => {
+        const { a } = obj;
+        a(1, 2, 3);
+        a(1, 2, 3);
+      });
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a(1, 2);                             a(1, 2, 3);  <-- args is error
+2.  a("hello", false);                   a(1, 2, 3);  <-- args is error
+3.  b([1,2,3], {"a":"1","b":[4,5,6]});  <-- step is error
+4.  c(6, 7);                            <-- step is error
+5.  b("hello");                         <-- step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
+  it('test addCallFunction call error actual more than expect', () => {
+    const { order } = mockFunction();
+    try {
+
+      order.verify(obj => {
+        const { a } = obj;
+        a(1, 2, 3);
+        a(1, 2, 3);
+        a(1, 2, 3);
+        a(1, 2, 3);
+        a(1, 2, 3);
+        a(1, 2, 3);
+      });
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a(1, 2);                             a(1, 2, 3);  <-- args is error
+2.  a("hello", false);                   a(1, 2, 3);  <-- args is error
+3.  b([1,2,3], {"a":"1","b":[4,5,6]});   a(1, 2, 3);  <-- module & args is error
+4.  c(6, 7);                             a(1, 2, 3);  <-- module & args is error
+5.  b("hello");                          a(1, 2, 3);  <-- module & args is error
+6.                                       a(1, 2, 3);  <-- step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+  it('test addCallFunction call error arg error 1', () => {
+    const { order } = mockFunction();
+    try {
+
+      order.verify(obj => {
+        const { a, b, c } = obj;
+        a(1, 3);
+        a('hello', false);
+        b([ 1, 2, 3 ], { a: '1', b: [ 4, 5, 6 ] });
+        c(6, 7);
+        b('hello');
+      });
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a(1, 2);                             a(1, 3);  <-- args is error
+2.  a("hello", false);                   a("hello", false);
+3.  b([1,2,3], {"a":"1","b":[4,5,6]});   b([1,2,3], {"a":"1","b":[4,5,6]});
+4.  c(6, 7);                             c(6, 7);
+5.  b("hello");                          b("hello");`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+  it('test addCallFunction call error arg error 2 ', () => {
+    const { order } = mockFunction();
+    try {
+
+      order.verify(obj => {
+        const { a, b, c } = obj;
+        a(1, 2);
+        a('a', false);
+        b([ 1, 2, 3 ], { a: '1', b: [ 4, 5, 6 ] });
+        c(6, 7);
+        b('hello');
+      });
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a(1, 2);                             a(1, 2);
+2.  a("hello", false);                   a("a", false);  <-- args is error
+3.  b([1,2,3], {"a":"1","b":[4,5,6]});   b([1,2,3], {"a":"1","b":[4,5,6]});
+4.  c(6, 7);                             c(6, 7);
+5.  b("hello");                          b("hello");`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+  it('test addCallFunction call error arg error 3 ', () => {
+    const { order } = mockFunction();
+    try {
+
+      order.verify(obj => {
+        const { a, b, c } = obj;
+        a('a');
+        a('a', false);
+        b([ 1, 2, 3 ], { a: '1', b: [ 4, 5, 6 ] });
+        c(6, 7);
+        b('hello');
+      });
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a(1, 2);                             a("a");  <-- args is error
+2.  a("hello", false);                   a("a", false);  <-- args is error
+3.  b([1,2,3], {"a":"1","b":[4,5,6]});   b([1,2,3], {"a":"1","b":[4,5,6]});
+4.  c(6, 7);                             c(6, 7);
+5.  b("hello");                          b("hello");`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
+
+  it('test addCallFunction & addModuleVar & addModuleCallFunction for two sucess & error', () => {
+    const order = create(),
+      ctxA = { id: 1 },
+      ctxB = { id: 2 },
+      ctxC = { id: 3 };
+
+    order.addCallFunction('f1', { args: [ 1 ], context: ctxA });
+    order.addCallFunction('f2', { args: [ 'hello' ], context: ctxB });
+    order.addModuleVar('obj1', 'v1');
+    order.addModuleCallFunction('obj1', 'f1', { args: [ 'hello', 'world' ], context: ctxC });
+    order.addModuleVar('obj2', 'v2');
+    order.addModuleCallFunction('obj2', 'f2', { args: [ 1, true, 'king' ], context: ctxC });
+
+
+    order.verify(obj => {
+      const { f1, f2, obj1, obj2 } = obj;
+      f1(1);
+      f2('hello');
+      obj1.v1;
+      obj1.f1('hello', 'world');
+      obj2.v2;
+      obj2.f2(1, true, 'king');
+    });
+
+    order.verify(obj => {
+      const { f1, f2, obj1, obj2 } = obj;
+      f1(1);
+      f2('hello');
+      obj1.v1;
+      obj1.f1('hello', 'world');
+      obj2.v2;
+      obj2.f2(1, true, 'king');
+    });
+
+    try {
+
+      order.verify(obj => {
+        const { f1, f2, obj1, obj2 } = obj;
+        f1(2);
+        f2('hello');
+        obj1.v1;
+        obj1.f1('hello', 'world');
+        obj2.v2;
+        obj2.f2(1, true, 'king');
+      });
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  f1(1);                       f1(2);  <-- args is error
+2.  f2("hello");                 f2("hello");
+3.  obj1.v1;                     obj1.v1;
+4.  obj1.f1("hello", "world");   obj1.f1("hello", "world");
+5.  obj2.v2;                     obj2.v2;
+6.  obj2.f2(1, true, "king");    obj2.f2(1, true, "king");`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+
+  });
 
 });

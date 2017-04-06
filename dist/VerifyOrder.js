@@ -20,7 +20,6 @@
 const deepEqual = require('deep-equal');
 const { StringUtils } = require('vx-var-utils');
 const { pad } = StringUtils;
-const assert = require('assert');
 const Module_Func = 'module_func';
 const Module_Var = 'module_var';
 const Func = 'func';
@@ -104,7 +103,7 @@ class VerifyOrderImpl {
           realyOrder /*: Array<OrderStep>*/ = [];
 
     let index = 0;
-
+    this.moduleVar = {};
     Object.keys(this.mockNames).forEach(expectMockName => {
       const mockInfoList /*: Array<VerifyOrderMock>*/ = this.mockNames[expectMockName],
             self = this;
@@ -201,27 +200,44 @@ class VerifyOrderImpl {
         if (type === Func) {
 
           value = (...callArgs) => {
+
             const step = this.steps[index];
-            assert.equal(!!step, true, '超过指定步数');
-            assert.equal(step.mockName, expectMockName, '模块不匹配');
-            let args, context;
-
-            const { callInfo } = step;
-            if (callInfo) {
-
-              ({ args, context } = callInfo);
-            }
-            assert.deepEqual(callArgs, args, '参数不匹配');
-            function withContext(context) {
-              return function (ctx /*: any*/) {
-                assert.deepEqual(ctx, context, 'this绑定不匹配');
+            realyOrder.push({
+              mockName: expectMockName,
+              name: FuncName,
+              type,
+              callInfo: {
+                args: callArgs
+              }
+            });
+            if (!step) {
+              verifyResult.sucess = false;
+              verifyResult.error[index] = this.generateError({ stepError: true });
+              index++;
+              return {
+                withContext() {}
               };
             }
 
-            index++;
-            return {
-              withContext: withContext(context)
+            const { mockName, callInfo } = step;
+            let args;
+            if (callInfo) {
+              ({ args } = callInfo);
+            }
+
+            const mockNameIsEql = mockName === expectMockName;
+            const argIsEql = this.isArgsEql(args, callArgs);
+            const checkResult = mockNameIsEql && argIsEql;
+            if (checkResult === false) {
+              verifyResult.error[index] = this.generateError({ mockNameIsEql, argIsEql });
+              verifyResult.sucess = false;
+            }
+
+            const withContextObj = {
+              withContext: this.withContext(callInfo, verifyResult, index, self)
             };
+            index++;
+            return withContextObj;
           };
         }
         if (type === Func) {
@@ -273,7 +289,7 @@ class VerifyOrderImpl {
       }
       const rs /*: Array<string>*/ = [];
       callInfo.args && callInfo.args.forEach(arg => {
-        rs.push(JSON.parse(arg));
+        rs.push(JSON.stringify(arg));
       });
       return rs.join(', ');
     }
