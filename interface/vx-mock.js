@@ -136,6 +136,7 @@ declare module 'vx-mock' {
   declare type ExportObj = {
     mockObject: ModuleMockFactory;
     mockFunction: MockFunctionFactory;
+    VerifyOrder: VerifyOrderFactory;
   }
 
   declare type GenerateErrorFuncArg = {
