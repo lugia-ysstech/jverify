@@ -638,4 +638,44 @@ describe('VerifyOrder', function () {
 
   });
 
+  it('test last step is error', () => {
+    const order = create();
+    order.addModuleCallFunction('a', 'f1');
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.f1();
+        a.f2();
+      });
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1();   a.f1();
+2.  <-- a.f2 is undefined & step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+
+  });
+  it('test mid step is error', () => {
+    const order = create();
+    order.addModuleCallFunction('a', 'f1');
+    order.addModuleCallFunction('a', 'f1');
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.f1();
+        a.f2();
+        a.f1();
+      });
+    } catch (err) {
+      console.info(err);
+      err.message.should.to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1();   a.f1();
+2.  a.f1();  <-- a.f2 is undefined & step is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+
+  });
 });

@@ -139,7 +139,7 @@ class VerifyOrderImpl {
             }
 
             const { mockName, name, callInfo } = step;
-            let args;
+            let args = [];
             if (callInfo) {
               ({ args } = callInfo);
             }
@@ -221,7 +221,7 @@ class VerifyOrderImpl {
             }
 
             const { mockName, callInfo } = step;
-            let args;
+            let args = [];
             if (callInfo) {
               ({ args } = callInfo);
             }
@@ -338,12 +338,15 @@ class VerifyOrderImpl {
       const item = generateOneCall(step);
       result[i] += `   ${item}`;
     });
-
-    for (let i /*: number*/ = 0; i < maxLen; i++) {
+    let i /*: number*/ = 0;
+    for (; i < maxLen; i++) {
       const msg = error[i];
       if (msg && msg.length > 0) {
         result[i] += `  <-- ${msg.join(' & ')} is error`;
       }
+    }
+    if (error[i]) {
+      result[i] = `${i + 1}.  <-- ${error[i]} & ${this.generateError({ stepError: true }).join()} is error`;
     }
     return result.join('\n');
   }
