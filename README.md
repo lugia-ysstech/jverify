@@ -118,6 +118,10 @@ mockFunction.restore();
 console.info('方法调用次数', mockFunction.callTimes());
 
 ```
+##restoreAll & restore
+mockObject下mockVar、mockFunction对象，支持restore方法用于还原为原有处理。
+mockFunction也支持restore方法用于还原原有处理。
+为了方便处理，mockObject还提供了restoreAll用来还原所有的mockFunction与mockVar.
 
 ##VerifyOrder
 用于进行mock对象之间顺序，以及方法mock对象的入参、this引用的检查。并给出响应错误信息的提示。
