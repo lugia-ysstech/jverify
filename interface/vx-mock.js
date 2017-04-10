@@ -76,6 +76,10 @@ declare module 'vx-mock' {
      * @varName 目标变量名
      */
     mockVar(varName: string): MockVarReulst;
+    /*
+     * 重置mock目标对象的所有方法或变量。变为使用原有方法及原有值进行处理
+     */
+    restoreAll(): void;
   }
 
   declare type VerifyOrderConfig = {

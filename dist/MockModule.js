@@ -10,6 +10,7 @@ const { MockFunctionInner } = require('./Const');
 class MockModuleImpl {
   /*:: target: any;*/
   /*:: orderConfig: ?VerifyOrderConfig;*/
+  /*:: restore: Array<Function>;*/
 
 
   constructor(module /*: Object*/, orderConfig /*:: ?: VerifyOrderConfig*/) {
@@ -17,6 +18,7 @@ class MockModuleImpl {
       throw new Error('mock的目标对象不能为空!');
     }
     this.target = module;
+    this.restore = [];
     this.orderConfig = orderConfig;
     if (orderConfig) {
       const { verifyOrder, mockName } = orderConfig;
@@ -67,7 +69,7 @@ class MockModuleImpl {
       return orginal.apply(orginalContext ? orginalContext : this, args);
     };
 
-    return {
+    const mockObj = {
       mock(target /*: Function*/, ctx /*:: ?: Object*/) {
         mockTarget = target;
         context = ctx;
@@ -109,6 +111,10 @@ class MockModuleImpl {
         orginalContext = ctx;
       }
     };
+    this.restore.push(() => {
+      mockObj.restore();
+    });
+    return mockObj;
   }
 
   /*
@@ -139,7 +145,7 @@ class MockModuleImpl {
         return orginal;
       }
     });
-    return {
+    const mockObj = {
       mock(arg) {
         isMock = true;
         mockTarget = arg;
@@ -156,6 +162,17 @@ class MockModuleImpl {
         return times;
       }
     };
+    this.restore.push(() => {
+      mockObj.restore();
+    });
+    return mockObj;
+  }
+
+  restoreAll() /*: void*/ {
+
+    this.restore.forEach(restore => {
+      restore();
+    });
   }
 }
 

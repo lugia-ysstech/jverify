@@ -318,5 +318,38 @@ describe('MockModule', function () {
 
   });
 
+  it('test restore all', () => {
+    const target = {
+      f1 () { return 1; },
+      f2 () { return 2; },
+      a1: 'old',
+    };
+    const mockObj = create(target);
+    mockObj.mockFunction('f1').returned(3);
+    mockObj.mockFunction('f2').returned(4);
+    mockObj.mockVar('a1').returned('new');
+
+    mockObj.restoreAll();
+
+    target.f1().should.to.be.equal(1);
+    target.f2().should.to.be.equal(2);
+    target.a1.should.to.be.equal('old');
+
+    mockObj.mockFunction('f1').returned(3);
+    mockObj.mockFunction('f2').returned(4);
+
+    //  mock对象仍可以继续使用
+    mockObj.mockVar('a1').returned('new');
+    target.f1().should.to.be.equal(3);
+    target.f2().should.to.be.equal(4);
+    target.a1.should.to.be.equal('new');
+
+    // restoreAll 可重复使用
+    mockObj.restoreAll();
+
+    target.f1().should.to.be.equal(1);
+    target.f2().should.to.be.equal(2);
+    target.a1.should.to.be.equal('old');
+  });
 
 });
