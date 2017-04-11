@@ -25,7 +25,6 @@
     "chai": "^3.5.0",
     "co": "^4.6.0",
     "eslint-config-vx": "git+http://192.168.101.103/vx/eslint-config-vx",
-    "vx-var-utils": "git+http://192.168.101.103:xnode/vx-var-utils",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-flowtype": "^2.25.0",
     "flow": "^0.2.3",
@@ -45,6 +44,7 @@
     "thunkify": "^2.1.2"
   },
   "dependencies": {
+    "vx-var-utils": "git+http://192.168.101.103:xnode/vx-var-utils",
     "deep-equal": "^1.0.1"
   },
   "keywords": [
