@@ -6,6 +6,7 @@
 .*/benchmarks/.*
 [include]
 [libs]
+flow-typed/
 interface/
 node_modules/vx-var-utils/interface/
 [options]
