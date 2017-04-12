@@ -1,11 +1,11 @@
 /**
  * Created by liguoxin on 2017/3/1.
+ *
  */
 const chai = require('chai');
-const { mockFunction } = require('../dist/index');
+const { mockFunction, VerifyOrder } = require('../dist/index');
 const { create } = mockFunction;
 const { expect } = chai;
-chai.should();
 
 
 describe('MockFunction', function () {
@@ -19,7 +19,7 @@ describe('MockFunction', function () {
     targetFunc();
     targetFunc();
     targetFunc();
-    mockFunction.callTimes().should.to.be.equal(3);
+    expect(mockFunction.callTimes()).to.be.equal(3);
   });
 
   it('test mock function returned', () => {
@@ -29,8 +29,8 @@ describe('MockFunction', function () {
     const targetFunc = mockFunction.getFunction();
     mockFunction.returned(101);
     mockFunction.returned(102);
-    targetFunc().should.to.be.equal(101);
-    targetFunc().should.to.be.equal(102);
+    expect(targetFunc()).to.be.equal(101);
+    expect(targetFunc()).to.be.equal(102);
   });
 
   it('test mock function mock', () => {
@@ -43,8 +43,8 @@ describe('MockFunction', function () {
       return 2 * a;
     });
 
-    targetFunc(5).should.to.be.equal(10);
-    targetFunc(10).should.to.be.equal(20);
+    expect(targetFunc(5)).to.be.equal(10);
+    expect(targetFunc(10)).to.be.equal(20);
   });
 
   it('test mock function returned higher mock', () => {
@@ -57,10 +57,10 @@ describe('MockFunction', function () {
       return 2 * a;
     });
 
-    targetFunc(5).should.to.be.equal(1);
-    targetFunc(5).should.to.be.equal(2);
-    targetFunc(5).should.to.be.equal(10);
-    targetFunc(10).should.to.be.equal(20);
+    expect(targetFunc(5)).to.be.equal(1);
+    expect(targetFunc(5)).to.be.equal(2);
+    expect(targetFunc(5)).to.be.equal(10);
+    expect(targetFunc(10)).to.be.equal(20);
   });
 
   it('test mock function anonymous', () => {
@@ -69,7 +69,7 @@ describe('MockFunction', function () {
     const targetFunc = mockFunction.getFunction();
     mockFunction.returned(2);
 
-    targetFunc(5).should.to.be.equal(2);
+    expect(targetFunc(5)).to.be.equal(2);
   });
 
 
@@ -84,10 +84,10 @@ describe('MockFunction', function () {
     targetFunc(...argTwo);
     targetFunc(...argThree);
 
-    mockFunction.queryCallArgs().should.to.be.eql([ argOne, argTwo, argThree ]);
-    mockFunction.getCallArgs(0).should.to.be.eql(argOne);
-    mockFunction.getCallArgs(1).should.to.be.eql(argTwo);
-    mockFunction.getCallArgs(2).should.to.be.eql(argThree);
+    expect(mockFunction.queryCallArgs()).to.be.eql([ argOne, argTwo, argThree ]);
+    expect(mockFunction.getCallArgs(0)).to.be.eql(argOne);
+    expect(mockFunction.getCallArgs(1)).to.be.eql(argTwo);
+    expect(mockFunction.getCallArgs(2)).to.be.eql(argThree);
 
   });
 
@@ -98,8 +98,8 @@ describe('MockFunction', function () {
     const targetFunc = mockFunction.getFunction();
     targetFunc.call(obj);
 
-    mockFunction.queryCallContext().should.to.be.eql([ obj ]);
-    mockFunction.getCallContext(0).should.to.be.eql(obj);
+    expect(mockFunction.queryCallContext()).to.be.eql([ obj ]);
+    expect(mockFunction.getCallContext(0)).to.be.eql(obj);
   });
 
 
@@ -115,8 +115,8 @@ describe('MockFunction', function () {
       return this.name;
     }, obj);
 
-    targetFunc().should.to.be.equal(obj.name);
-    mockFunction.getCallContext(0).should.to.be.eql(obj);
+    expect(targetFunc()).to.be.equal(obj.name);
+    expect(mockFunction.getCallContext(0)).to.be.eql(obj);
   });
   it('test mock function mock ctx for returned is same to mock', () => {
 
@@ -132,7 +132,7 @@ describe('MockFunction', function () {
     mockFunction.returned(100);
     targetFunc();
     targetFunc();
-    mockFunction.getCallContext(0).should.to.be.eql(obj);
+    expect(mockFunction.getCallContext(0)).to.be.eql(obj);
   });
 
 
@@ -146,15 +146,15 @@ describe('MockFunction', function () {
     targetFunc();
     mockFunction.returned(1);
     mockFunction.restore();
-    mockFunction.queryCallArgs().should.to.be.eql([]);
-    mockFunction.queryCallContext().should.to.be.eql([]);
-    mockFunction.callTimes().should.to.be.equal(0);
+    expect(mockFunction.queryCallArgs()).to.be.eql([]);
+    expect(mockFunction.queryCallContext()).to.be.eql([]);
+    expect(mockFunction.callTimes()).to.be.equal(0);
   });
 
 
   it('if verifyOrder is notEmpty mockName must had', () => {
     expect(() => {
-      create({ mockName: null, verifyOrder: {} });
+      create({ mockName: null, verifyOrder: VerifyOrder.create() });
     }).throw(Error, '开启VerifyOrder，mockName不能为空!');
   });
   it('mock f1 has call addCallFunction', done => {
@@ -163,7 +163,7 @@ describe('MockFunction', function () {
     const mockObj = create({
       mockName: 'a', verifyOrder: {
         addCallFunction (mockName) {
-          mockName.should.to.be.equal('a');
+          expect(mockName).to.be.equal('a');
           done();
         },
       },

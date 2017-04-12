@@ -40,7 +40,7 @@ class VerifyOrderImpl {
     return this;
   }
 
-  addModuleCallFunction(mockName /*: string*/, funcName /*: string*/, callInfo /*: CallInfo*/) /*: void*/ {
+  addModuleCallFunction(mockName /*: string*/, funcName /*: string*/, callInfo /*: ?CallInfo*/) /*: void*/ {
 
     this.checkMockNameOnAdd(mockName);
 
@@ -52,7 +52,7 @@ class VerifyOrderImpl {
     this.steps.push({
       mockName,
       name: funcName,
-      callInfo,
+      callInfo: callInfo ? callInfo : { args: [] },
       type: Module_Func
     });
   }
@@ -73,7 +73,7 @@ class VerifyOrderImpl {
     });
   }
 
-  addCallFunction(mockName /*: string*/, callInfo /*: CallInfo*/) /*: void*/ {
+  addCallFunction(mockName /*: string*/, callInfo /*: ?CallInfo*/) /*: void*/ {
     this.checkMockNameOnAdd(mockName);
 
     this.mockNames[mockName].push({
@@ -84,7 +84,7 @@ class VerifyOrderImpl {
     this.steps.push({
       name: FuncName,
       mockName,
-      callInfo,
+      callInfo: callInfo ? callInfo : { args: [] },
       type: Func
     });
   }

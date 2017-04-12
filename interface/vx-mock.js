@@ -122,9 +122,9 @@ declare module 'vx-mock' {
 
   declare interface VerifyOrder {
 
-    addModuleCallFunction(mockName: string, funcName: string, callInfo: CallInfo): void;
+    addModuleCallFunction(mockName: string, funcName: string, callInfo: ?CallInfo): void;
     addModuleVar(mockName: string, attrName: string): void;
-    addCallFunction(mockName: string, callInfo: CallInfo): void;
+    addCallFunction(mockName: string, callInfo: ?CallInfo): void;
     verify(callback: Function): void;
   }
 

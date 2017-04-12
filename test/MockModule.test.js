@@ -1,10 +1,10 @@
 /**
  * Created by liguoxin on 2017/3/1.
+ * @flow
  */
 const chai = require('chai');
-const { mockObject } = require('../dist/index');
+const { mockObject, VerifyOrder } = require('../dist/index');
 const { create } = mockObject;
-chai.should();
 const { expect } = chai;
 
 
@@ -25,13 +25,13 @@ describe('MockModule', function () {
     };
     const userMock = create(user);
     const mockFunc = userMock.mockFunction('getName');
-    user.getName().should.to.be.equal(before);
+    expect(user.getName()).to.be.equal(before);
 
     const after = 'Ligx';
     mockFunc.mock(() => {
       return after;
     });
-    user.getName().should.to.be.equal(after);
+    expect(user.getName()).to.be.equal(after);
   });
 
   it('mock func restore', () => {
@@ -42,17 +42,17 @@ describe('MockModule', function () {
     };
     const mock = create(obj).mockFunction('getValue');
 
-    obj.getValue().should.to.be.equal(100);
+    expect(obj.getValue()).to.be.equal(100);
     mock.returned(101);
     mock.mock(() => 1000);
     mock.restore();
 
     // 状态还原
-    mock.queryCallArgs().should.to.be.eql([]);
-    mock.queryCallContext().should.to.be.eql([]);
-    mock.callTimes().should.to.be.equal(0);
+    expect(mock.queryCallArgs()).to.be.eql([]);
+    expect(mock.queryCallContext()).to.be.eql([]);
+    expect(mock.callTimes()).to.be.equal(0);
     // 模拟值还原
-    obj.getValue().should.to.be.equal(100);
+    expect(obj.getValue()).to.be.equal(100);
 
   });
   it('mock func mockContext', () => {
@@ -66,7 +66,7 @@ describe('MockModule', function () {
     mock.mockContext({
       value: 101,
     });
-    obj.getValue().should.to.be.equal(101);
+    expect(obj.getValue()).to.be.equal(101);
   });
   it('mock func mockContext after restore', () => {
     const obj = {
@@ -80,7 +80,7 @@ describe('MockModule', function () {
       value: 101,
     });
     mock.restore();
-    obj.getValue().should.to.be.equal(100);
+    expect(obj.getValue()).to.be.equal(100);
   });
 
 
@@ -92,11 +92,11 @@ describe('MockModule', function () {
     };
     const userMock = create(user);
     const mockAdd = userMock.mockFunction('add');
-    user.add(1, 2).should.to.be.equal(3);
+    expect(user.add(1, 2)).to.be.equal(3);
     mockAdd.mock((a, b) => {
       return a - b;
     });
-    user.add(2, 3).should.to.be.equal(-1);
+    expect(user.add(2, 3)).to.be.equal(-1);
   });
 
   it('test mock func callTimes ', () => {
@@ -109,7 +109,7 @@ describe('MockModule', function () {
     user.add();
     user.add();
     user.add();
-    mockAdd.callTimes().should.to.be.equal(3);
+    expect(mockAdd.callTimes()).to.be.equal(3);
   });
 
   it('test mock func verify CallArgs', () => {
@@ -124,10 +124,10 @@ describe('MockModule', function () {
     user.add(...callArgs[ 1 ]);
     user.add(...callArgs[ 2 ]);
     mockAdd.mock(() => 10);
-    mockAdd.queryCallArgs().should.to.be.eql(callArgs);
-    mockAdd.getCallArgs(0).should.to.be.eql(callArgs[ 0 ]);
-    mockAdd.getCallArgs(1).should.to.be.eql(callArgs[ 1 ]);
-    mockAdd.getCallArgs(2).should.to.be.eql(callArgs[ 2 ]);
+    expect(mockAdd.queryCallArgs()).to.be.eql(callArgs);
+    expect(mockAdd.getCallArgs(0)).to.be.eql(callArgs[ 0 ]);
+    expect(mockAdd.getCallArgs(1)).to.be.eql(callArgs[ 1 ]);
+    expect(mockAdd.getCallArgs(2)).to.be.eql(callArgs[ 2 ]);
   });
 
   it('test mock func verify CallContext', () => {
@@ -140,19 +140,19 @@ describe('MockModule', function () {
     user.add();
     user.add();
     mockAdd.mock(() => 10);
-    mockAdd.queryCallContext()[ 0 ].should.to.be.equal(user);
-    mockAdd.queryCallContext()[ 1 ].should.to.be.equal(user);
-    mockAdd.getCallContext(0).should.to.be.equal(user);
-    mockAdd.getCallContext(1).should.to.be.equal(user);
+    expect(mockAdd.queryCallContext()[ 0 ]).to.be.equal(user);
+    expect(mockAdd.queryCallContext()[ 1 ]).to.be.equal(user);
+    expect(mockAdd.getCallContext(0)).to.be.equal(user);
+    expect(mockAdd.getCallContext(1)).to.be.equal(user);
     // 指定context
     const ctx = { user: '111' };
     mockAdd.mock(() => 10, ctx);
     user.add();
-    mockAdd.queryCallContext()[ 2 ].should.to.be.equal(ctx);
+    expect(mockAdd.queryCallContext()[ 2 ]).to.be.equal(ctx);
 
     mockAdd.mock(() => 10);
     user.add();
-    mockAdd.queryCallContext()[ 3 ].should.to.be.equal(user);
+    expect(mockAdd.queryCallContext()[ 3 ]).to.be.equal(user);
 
   });
 
@@ -168,13 +168,13 @@ describe('MockModule', function () {
 
     mockAdd.mock(() => 1, obj);
     user.add();
-    mockAdd.getCallContext(0).should.to.be.equal(obj);
+    expect(mockAdd.getCallContext(0)).to.be.equal(obj);
     mockAdd.returned('hello');
     mockAdd.returned('hello');
     user.add();
     user.add();
-    mockAdd.getCallContext(1).should.to.be.equal(obj);
-    mockAdd.getCallContext(2).should.to.be.equal(obj);
+    expect(mockAdd.getCallContext(1)).to.be.equal(obj);
+    expect(mockAdd.getCallContext(2)).to.be.equal(obj);
   });
 
 
@@ -192,10 +192,9 @@ describe('MockModule', function () {
       return 'hello';
     });
 
-    user.add('1', 'b').should.to.be.equal(100);
-    user.add('1', 'b').should.to.be.equal(101);
-    user.add('1', 'b').should.to.be.equal('hello');
-
+    expect(user.add('1', 'b')).to.be.equal(100);
+    expect(user.add('1', 'b')).to.be.equal(101);
+    expect(user.add('1', 'b')).to.be.equal('hello');
   });
 
 
@@ -205,9 +204,9 @@ describe('MockModule', function () {
     };
     const userMock = create(obj);
     const mockVar = userMock.mockVar('age');
-    obj.age.should.to.be.equal(15);
+    expect(obj.age).to.be.equal(15);
     mockVar.mock(18);
-    obj.age.should.to.be.equal(18);
+    expect(obj.age).to.be.equal(18);
 
   });
   it('mock var calltimes', () => {
@@ -220,7 +219,7 @@ describe('MockModule', function () {
     obj.age;
     obj.age;
     obj.age;
-    mockVar.callTimes().should.to.be.equal(4);
+    expect(mockVar.callTimes()).to.be.equal(4);
 
   });
 
@@ -238,9 +237,9 @@ describe('MockModule', function () {
 
     mockVar.restore();
     // 状态还原
-    mockVar.callTimes().should.to.be.equal(0);
+    expect(mockVar.callTimes()).to.be.equal(0);
     // 模拟值还原
-    obj.age.should.to.be.equal(15);
+    expect(obj.age).to.be.equal(15);
   });
 
   it('mock var has returned', () => {
@@ -248,12 +247,12 @@ describe('MockModule', function () {
       age: 15,
     };
     const userMock = create(obj);
-    obj.age.should.to.be.equal(15);
+    expect(obj.age).to.be.equal(15);
     const mockVar = userMock.mockVar('age');
     mockVar.returned(17);
     mockVar.returned(16);
-    obj.age.should.to.be.equal(17);
-    obj.age.should.to.be.equal(16);
+    expect(obj.age).to.be.equal(17);
+    expect(obj.age).to.be.equal(16);
 
   });
 
@@ -267,16 +266,16 @@ describe('MockModule', function () {
     mockVar.mock(18);
     mockVar.returned(17);
     mockVar.returned(16);
-    obj.age.should.to.be.equal(17);
-    obj.age.should.to.be.equal(16);
-    obj.age.should.to.be.equal(18);
+    expect(obj.age).to.be.equal(17);
+    expect(obj.age).to.be.equal(16);
+    expect(obj.age).to.be.equal(18);
 
   });
 
 
   it('if verifyOrder is notEmpty mockName must had', () => {
     expect(() => {
-      create({}, { mockName: null, verifyOrder: {} });
+      create({}, { mockName: '', verifyOrder: VerifyOrder.create() });
     }).throw(Error, '开启VerifyOrder，mockName不能为空!');
   });
 
@@ -284,14 +283,16 @@ describe('MockModule', function () {
 
     const target = { v: '111' };
 
-    const mockObj = create(target, {
-      mockName: 'a', verifyOrder: {
-        addModuleVar (mockName, attrName) {
-          mockName.should.to.be.equal('a');
-          attrName.should.to.be.equal('v');
-          done();
-        },
+    const order = {
+      addModuleVar (mockName, attrName) {
+        expect(mockName).to.be.equal('a');
+        expect(attrName).to.be.equal('v');
+        done();
       },
+    };
+
+    const mockObj = create(target, {
+      mockName: 'a', verifyOrder: Object.assign({}, VerifyOrder.create(), order),
     });
     mockObj.mockVar('v');
 
@@ -303,14 +304,16 @@ describe('MockModule', function () {
 
     const target = { f1 () {} };
 
-    const mockObj = create(target, {
-      mockName: 'a', verifyOrder: {
-        addModuleCallFunction (mockName, attrName) {
-          mockName.should.to.be.equal('a');
-          attrName.should.to.be.equal('f1');
-          done();
-        },
+    const order = {
+      addModuleCallFunction (mockName, attrName) {
+        expect(mockName).to.be.equal('a');
+        expect(attrName).to.be.equal('f1');
+        done();
       },
+    };
+
+    const mockObj = create(target, {
+      mockName: 'a', verifyOrder: Object.assign({}, VerifyOrder.create(), order),
     });
     mockObj.mockFunction('f1');
 
@@ -331,25 +334,25 @@ describe('MockModule', function () {
 
     mockObj.restoreAll();
 
-    target.f1().should.to.be.equal(1);
-    target.f2().should.to.be.equal(2);
-    target.a1.should.to.be.equal('old');
+    expect(target.f1()).to.be.equal(1);
+    expect(target.f2()).to.be.equal(2);
+    expect(target.a1).to.be.equal('old');
 
     mockObj.mockFunction('f1').returned(3);
     mockObj.mockFunction('f2').returned(4);
 
     //  mock对象仍可以继续使用
     mockObj.mockVar('a1').returned('new');
-    target.f1().should.to.be.equal(3);
-    target.f2().should.to.be.equal(4);
-    target.a1.should.to.be.equal('new');
+    expect(target.f1()).to.be.equal(3);
+    expect(target.f2()).to.be.equal(4);
+    expect(target.a1).to.be.equal('new');
 
     // restoreAll 可重复使用
     mockObj.restoreAll();
 
-    target.f1().should.to.be.equal(1);
-    target.f2().should.to.be.equal(2);
-    target.a1.should.to.be.equal('old');
+    expect(target.f1()).to.be.equal(1);
+    expect(target.f2()).to.be.equal(2);
+    expect(target.a1).to.be.equal('old');
   });
 
 });
