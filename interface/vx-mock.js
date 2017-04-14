@@ -132,6 +132,11 @@ declare module 'vx-mock' {
   declare interface VerifyOrderFactory {
     create(): VerifyOrder;
   }
+
+  declare interface VerifyOrderConfigFactory {
+    create(mockName: string, order: VerifyOrder): VerifyOrderConfig;
+  }
+
   declare type VerifyResultErrorInfo = { [key: number]: Array<string> };
   declare type VerifyResult = {|
     sucess: boolean;
@@ -141,6 +146,7 @@ declare module 'vx-mock' {
     mockObject: ModuleMockFactory;
     mockFunction: MockFunctionFactory;
     VerifyOrder: VerifyOrderFactory;
+    VerifyOrderConfig: VerifyOrderConfigFactory;
   }
 
   declare type GenerateErrorFuncArg = {

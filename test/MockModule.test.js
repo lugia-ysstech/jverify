@@ -355,4 +355,30 @@ describe('MockModule', function () {
     expect(target.a1).to.be.equal('old');
   });
 
+  it('test returned ', () => {
+    class Test {
+      func () {
+        return this.ds();
+      }
+
+      ds () {
+
+      }
+    }
+    const target = new Test();
+
+    const order = VerifyOrder.create({});
+
+    const mockObj = create(target, { mockName: 'target', verifyOrder: order });
+
+    const funcMock = mockObj.mockFunction('ds');
+    funcMock.returned(1);
+    funcMock.returned(2);
+    funcMock.returned(3);
+
+    expect(target.func()).to.be.equal(1);
+    expect(target.func()).to.be.equal(2);
+    expect(target.func()).to.be.equal(3);
+  });
+
 });

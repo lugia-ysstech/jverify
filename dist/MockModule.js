@@ -45,7 +45,7 @@ class MockModuleImpl {
         times = 0;
 
     this.target[funcName] = function (...args) {
-
+      debugger;
       callArgs.push(args);
       const existInReturned = returned.length > 0;
       const ctx = context ? context : this;
