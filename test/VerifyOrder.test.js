@@ -699,4 +699,47 @@ describe('VerifyOrder', function () {
     assert.isOk(false, '未正取识别错误顺序');
 
   });
+  it('test callInfo  args is as function', () => {
+    const order = create();
+    order.addModuleCallFunction('a', 'f1', {
+      context: {},
+      args: [ () => { console.info('hellos'); } ],
+    });
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.f1();
+      });
+    } catch (err) {
+      console.info(err);
+      expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1(() => { console.info('hellos'); });   a.f1();  <-- args is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+  it('test callInfo  args is object  it has function', () => {
+    const order = create();
+    order.addModuleCallFunction('a', 'f1', {
+      context: {},
+      args: [ {
+        f1: () => { console.info('hellos'); },
+        f2 () {
+
+        },
+      } ],
+    });
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.f1();
+      });
+    } catch (err) {
+      console.info(err);
+      expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1({"f1":"() => { console.info('hellos'); }","f2":"f2() {\\n\\n        }"});   a.f1();  <-- args is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
 });

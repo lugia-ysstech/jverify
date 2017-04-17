@@ -293,6 +293,9 @@ class VerifyOrderImpl {
           case 'undefined':
             obj[p] = 'value is undefined';
             break;
+          case 'function':
+            obj[p] = obj[p].toString();
+            break;
           default:
         }
       }
@@ -305,7 +308,11 @@ class VerifyOrderImpl {
       }
       const rs /*: Array<string>*/ = [];
       callInfo.args && callInfo.args.forEach(arg => {
-        rs.push(JSON.stringify(setProp(arg)));
+        if (typeof arg === 'function') {
+          rs.push(arg.toString());
+        } else {
+          rs.push(JSON.stringify(setProp(arg)));
+        }
       });
       return rs.join(', ');
     }
