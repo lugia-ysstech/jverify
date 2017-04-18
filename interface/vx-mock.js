@@ -19,6 +19,10 @@ declare module 'vx-mock' {
      * 设置返回值，以此作为结果返回，优先级高于mock.
      */
     returned(arg: any): void;
+    /*
+     * 永远返回某个值
+     */
+    forever(arg: any): void;
 
   }
 

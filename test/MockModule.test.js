@@ -16,7 +16,7 @@ describe('MockModule', function () {
     }).throw(Error, 'mock的目标对象不能为空!');
   });
 
-  it('mock func', () => {
+  it('mockFunction', () => {
     const before = 'lily';
     const user = {
       getName () {
@@ -34,7 +34,7 @@ describe('MockModule', function () {
     expect(user.getName()).to.be.equal(after);
   });
 
-  it('mock func restore', () => {
+  it('mockFunction restore', () => {
     const obj = {
       getValue () {
         return 100;
@@ -55,7 +55,7 @@ describe('MockModule', function () {
     expect(obj.getValue()).to.be.equal(100);
 
   });
-  it('mock func mockContext', () => {
+  it('mockFunction mockContext', () => {
     const obj = {
       value: 100,
       getValue () {
@@ -68,7 +68,7 @@ describe('MockModule', function () {
     });
     expect(obj.getValue()).to.be.equal(101);
   });
-  it('mock func mockContext after restore', () => {
+  it('mockFunction mockContext after restore', () => {
     const obj = {
       value: 100,
       getValue () {
@@ -84,7 +84,7 @@ describe('MockModule', function () {
   });
 
 
-  it('test mock func has param', () => {
+  it('mockFunction has param', () => {
     const user = {
       add (a, b) {
         return a + b;
@@ -99,7 +99,7 @@ describe('MockModule', function () {
     expect(user.add(2, 3)).to.be.equal(-1);
   });
 
-  it('test mock func callTimes ', () => {
+  it('mockFunction callTimes ', () => {
     const user = {
       add () {
       },
@@ -112,7 +112,7 @@ describe('MockModule', function () {
     expect(mockAdd.callTimes()).to.be.equal(3);
   });
 
-  it('test mock func verify CallArgs', () => {
+  it('mockFunction verify CallArgs', () => {
     const user = {
       add () {
       },
@@ -130,7 +130,7 @@ describe('MockModule', function () {
     expect(mockAdd.getCallArgs(2)).to.be.eql(callArgs[ 2 ]);
   });
 
-  it('test mock func verify CallContext', () => {
+  it('mockFunction verify CallContext', () => {
     const user = {
       add () {
       },
@@ -156,7 +156,7 @@ describe('MockModule', function () {
 
   });
 
-  it('test mock func verify CallContext returned context is same to mock', () => {
+  it('mockFunction verify CallContext returned context is same to mock', () => {
     const user = {
       add () {
 
@@ -178,7 +178,7 @@ describe('MockModule', function () {
   });
 
 
-  it('test mock func returned highter mock', () => {
+  it('mockFunction returned highter mock', () => {
     const user = {
       add () {
 
@@ -198,7 +198,80 @@ describe('MockModule', function () {
   });
 
 
-  it('mock var', () => {
+  it('mockFunction returned ', () => {
+    class Test {
+      func () {
+        return this.ds();
+      }
+
+      ds () {
+
+      }
+    }
+    const target = new Test();
+
+    const order = VerifyOrder.create({});
+
+    const mockObj = create(target, { mockName: 'target', verifyOrder: order });
+
+    const funcMock = mockObj.mockFunction('ds');
+    funcMock.returned(1);
+    funcMock.returned(2);
+    funcMock.returned(3);
+
+    expect(target.func()).to.be.equal(1);
+    expect(target.func()).to.be.equal(2);
+    expect(target.func()).to.be.equal(3);
+  });
+  it('mockFunction forever ', () => {
+    class Test {
+      f1 () {}
+    }
+    const target = new Test(1);
+
+    const order = VerifyOrder.create({});
+
+    const mockObj = create(target, { mockName: 'target', verifyOrder: order });
+
+    const funcMock = mockObj.mockFunction('f1');
+    funcMock.forever(1000);
+
+    expect(target.f1()).to.be.equal(1000);
+    expect(target.f1()).to.be.equal(1000);
+    expect(target.f1()).to.be.equal(1000);
+    expect(target.f1()).to.be.equal(1000);
+    expect(target.f1()).to.be.equal(1000);
+  });
+
+  it('mockFunction restore for forever', () => {
+    const old = 10;
+    const forever = 11;
+    const obj = {
+      f1 () { return old; },
+    };
+    const userMock = create(obj);
+    const mockVar = userMock.mockFunction('f1');
+    mockVar.forever(forever);
+    expect(obj.f1()).to.be.equal(forever);
+    mockVar.restore();
+    expect(obj.f1()).to.be.equal(old);
+  });
+
+  it('mockFunction forever highter than any', () => {
+    const old = 10;
+    const forever = 11;
+    const obj = {
+      f1 () { return old; },
+    };
+    const userMock = create(obj);
+    const mockVar = userMock.mockFunction('f1');
+    mockVar.returned(1);
+    mockVar.returned(2);
+    mockVar.mock(() => 100);
+    mockVar.forever(forever);
+    expect(obj.f1()).to.be.equal(forever);
+  });
+  it('mockVar', () => {
     const obj = {
       age: 15,
     };
@@ -209,7 +282,7 @@ describe('MockModule', function () {
     expect(obj.age).to.be.equal(18);
 
   });
-  it('mock var calltimes', () => {
+  it('mockVar calltimes', () => {
     const obj = {
       age: 15,
     };
@@ -223,7 +296,7 @@ describe('MockModule', function () {
 
   });
 
-  it('mock var restore', () => {
+  it('mockVar restore', () => {
     const obj = {
       age: 15,
     };
@@ -242,7 +315,8 @@ describe('MockModule', function () {
     expect(obj.age).to.be.equal(15);
   });
 
-  it('mock var has returned', () => {
+
+  it('mockVar has returned', () => {
     const obj = {
       age: 15,
     };
@@ -257,7 +331,7 @@ describe('MockModule', function () {
   });
 
 
-  it('mock var has returned higer than mock', () => {
+  it('mockVar has returned highter than mock', () => {
     const obj = {
       age: 15,
     };
@@ -279,7 +353,7 @@ describe('MockModule', function () {
     }).throw(Error, '开启VerifyOrder，mockName不能为空!');
   });
 
-  it('mock obj.v has call addModuleVar', done => {
+  it('mockFunction obj.v has call addModuleVar', done => {
 
     const target = { v: '111' };
 
@@ -321,7 +395,7 @@ describe('MockModule', function () {
 
   });
 
-  it('test restore all', () => {
+  it('restoreAll', () => {
     const target = {
       f1 () { return 1; },
       f2 () { return 2; },
@@ -355,30 +429,76 @@ describe('MockModule', function () {
     expect(target.a1).to.be.equal('old');
   });
 
-  it('test returned ', () => {
+  it('mockVar returned ', () => {
     class Test {
-      func () {
-        return this.ds();
-      }
-
-      ds () {
-
+      /* :: num:number;*/
+      constructor (num /* : number*/) {
+        this.num = num;
       }
     }
-    const target = new Test();
+    const target = new Test(1);
 
     const order = VerifyOrder.create({});
 
     const mockObj = create(target, { mockName: 'target', verifyOrder: order });
 
-    const funcMock = mockObj.mockFunction('ds');
+    const funcMock = mockObj.mockVar('num');
     funcMock.returned(1);
     funcMock.returned(2);
     funcMock.returned(3);
 
-    expect(target.func()).to.be.equal(1);
-    expect(target.func()).to.be.equal(2);
-    expect(target.func()).to.be.equal(3);
+    expect(target.num).to.be.equal(1);
+    expect(target.num).to.be.equal(2);
+    expect(target.num).to.be.equal(3);
+  });
+
+  it('mockVar forever ', () => {
+    class Test {
+      /* :: num:number;*/
+      constructor (num /* : number*/) {
+        this.num = num;
+      }
+    }
+    const target = new Test(1);
+
+    const order = VerifyOrder.create({});
+
+    const mockObj = create(target, { mockName: 'target', verifyOrder: order });
+
+    const funcMock = mockObj.mockVar('num');
+    funcMock.forever(1000);
+
+    expect(target.num).to.be.equal(1000);
+    expect(target.num).to.be.equal(1000);
+    expect(target.num).to.be.equal(1000);
+    expect(target.num).to.be.equal(1000);
+    expect(target.num).to.be.equal(1000);
+  });
+
+  it('mockVar restore for forever', () => {
+    const obj = {
+      age: 15,
+    };
+    const userMock = create(obj);
+    const mockVar = userMock.mockVar('age');
+    obj.age;
+    mockVar.forever('a');
+    mockVar.restore();
+    expect(obj.age).to.be.equal(15);
+  });
+
+  it('mockVar forever highter than any', () => {
+    const obj = {
+      age: 15,
+    };
+    const userMock = create(obj);
+    const mockVar = userMock.mockVar('age');
+    obj.age;
+    mockVar.returned(1);
+    mockVar.returned(2);
+    mockVar.mock(() => 100);
+    mockVar.forever('a');
+    expect(obj.age).to.be.equal('a');
   });
 
 });

@@ -42,11 +42,12 @@ class MockModuleImpl {
         mockTarget,
         context,
         orginalContext,
+        foreverValue,
+        foreverIsOpen = false,
         times = 0;
 
     this.target[funcName] = function (...args) {
       callArgs.push(args);
-      const existInReturned = returned.length > 0;
       const ctx = context ? context : this;
 
       callContext.push(ctx);
@@ -59,7 +60,10 @@ class MockModuleImpl {
         }
       }
       times++;
-      if (existInReturned) {
+      if (foreverIsOpen) {
+        return foreverValue;
+      }
+      if (returned.length > 0) {
         return returned.shift();
       }
       if (mockTarget) {
@@ -85,6 +89,10 @@ class MockModuleImpl {
       returned(arg /*: any*/) /*: void*/ {
         returned.push(arg);
       },
+      forever(arg /*: any*/) /*: void*/ {
+        foreverValue = arg;
+        foreverIsOpen = true;
+      },
       queryCallContext() /*: Array<Object>*/ {
         return callContext;
       },
@@ -95,6 +103,8 @@ class MockModuleImpl {
         return callContext[index];
       },
       restore() {
+        foreverValue = undefined;
+        foreverIsOpen = false;
         mockTarget = undefined;
         returned = [];
         context = undefined;
@@ -109,6 +119,7 @@ class MockModuleImpl {
       mockContext(ctx /*: Object*/) /*: void*/ {
         orginalContext = ctx;
       }
+
     };
     this.restore.push(() => {
       mockObj.restore();
@@ -127,6 +138,8 @@ class MockModuleImpl {
     let isMock = false,
         mockTarget,
         returned = [],
+        foreverValue,
+        foreverIsOpen = false,
         times = 0;
     Object.defineProperty(this.target, varName, {
       get() {
@@ -135,6 +148,9 @@ class MockModuleImpl {
           verifyOrder.addModuleVar(mockName, varName);
         }
         times++;
+        if (foreverIsOpen) {
+          return foreverValue;
+        }
         if (returned.length > 0) {
           return returned.shift();
         }
@@ -149,12 +165,18 @@ class MockModuleImpl {
         isMock = true;
         mockTarget = arg;
       },
+      forever(arg /*: any*/) /*: void*/ {
+        foreverIsOpen = true;
+        foreverValue = arg;
+      },
       returned(arg /*: any*/) /*: void*/ {
         returned.push(arg);
       },
       restore() {
         isMock = false;
         times = 0;
+        foreverValue = undefined;
+        foreverIsOpen = false;
         returned = [];
       },
       callTimes() /*: number*/ {

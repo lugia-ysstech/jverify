@@ -60,6 +60,9 @@ class MockFunctionImpl {
 
       returned(arg /*: any*/) /*: void*/ {
         mockFunctionResult.returned(arg);
+      },
+      forever(arg /*: any*/) /*: void*/ {
+        mockFunctionResult.forever(arg);
       }
     };
   }

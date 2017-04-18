@@ -28,6 +28,11 @@ console.info(targetFunc.bind({ t: 'b' })(2));
 console.info('方法调用次数', mock.callTimes());
 console.info('方法调用的入参', mock.queryCallArgs());
 console.info('方法调用绑定的this', mock.queryCallContext());
+// 永远返回某个值
+mock.forever('forever');
+console.info('永远返回:', targetFunc(1));
+console.info('永远返回:', targetFunc(1));
+console.info('永远返回:', targetFunc(1));
 // 重置
 mock.restore();
 console.info('方法调用次数', mock.callTimes());
@@ -77,6 +82,12 @@ console.info(target.getName('c', 'd'));
 console.log('方法调用次数', mockFunction.callTimes());
 console.info('方法调用的入参', mockFunction.queryCallArgs());
 console.info('方法调用绑定的this', mockFunction.queryCallContext());
+// 永远返回某个值
+mockFunction.forever('forever');
+console.info('永远返回:', target.getName('a'));
+console.info('永远返回:', target.getName('b'));
+console.info('永远返回:', target.getName('c', 'd'));
+
 console.info('重置mock对象的状态');
 mockFunction.restore();
 console.info('方法调用次数', mockFunction.callTimes());
@@ -96,26 +107,32 @@ const target = {
 const mockObjectTarget = create(target);
 
 console.info('获取mock操作对象');
-const mockFunction = mockObjectTarget.mockVar('name');
+const mockVar = mockObjectTarget.mockVar('name');
 
 console.info(target.name);
 
-mockFunction.mock(() => 'mock jun');
+mockVar.mock(() => 'mock jun');
 console.info(`直接指定返回值,PS：returned的优先级高于mock指定的返回值
 如本例子，虽然指定了mock(()=>1)，但是会先将returned的返回值处理完成后
  使用mock方法`);
-mockFunction.returned('liming');
+mockVar.returned('liming');
 console.info('可指定多次返回值');
-mockFunction.returned('xiaohong');
+mockVar.returned('xiaohong');
 
 console.info(target.name);
 console.info(target.name);
 console.info(target.name);
 
-console.log('方法调用次数', mockFunction.callTimes());
+console.log('方法调用次数', mockVar.callTimes());
+// 永远返回某个值
+mockVar.forever('forever');
+console.info('永远返回:', target.name);
+console.info('永远返回:', target.name);
+console.info('永远返回:', target.name);
+
 console.info('重置mock对象的状态');
-mockFunction.restore();
-console.info('方法调用次数', mockFunction.callTimes());
+mockVar.restore();
+console.info('方法调用次数', mockVar.callTimes());
 
 ```
 ##restoreAll & restore

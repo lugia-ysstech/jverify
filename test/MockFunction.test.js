@@ -32,6 +32,17 @@ describe('MockFunction', function () {
     expect(targetFunc()).to.be.equal(101);
     expect(targetFunc()).to.be.equal(102);
   });
+  it('test mock function forever', () => {
+
+    const mockFunction = create();
+
+    const targetFunc = mockFunction.getFunction();
+    mockFunction.forever(101);
+    expect(targetFunc()).to.be.equal(101);
+    expect(targetFunc()).to.be.equal(101);
+    expect(targetFunc()).to.be.equal(101);
+    expect(targetFunc()).to.be.equal(101);
+  });
 
   it('test mock function mock', () => {
 
@@ -145,12 +156,12 @@ describe('MockFunction', function () {
     targetFunc();
     targetFunc();
     mockFunction.returned(1);
+    mockFunction.forever('hello');
     mockFunction.restore();
     expect(mockFunction.queryCallArgs()).to.be.eql([]);
     expect(mockFunction.queryCallContext()).to.be.eql([]);
     expect(mockFunction.callTimes()).to.be.equal(0);
   });
-
 
   it('if verifyOrder is notEmpty mockName must had', () => {
     expect(() => {
