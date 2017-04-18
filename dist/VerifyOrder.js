@@ -18,8 +18,9 @@
 
 
 const deepEqual = require('deep-equal');
-const { StringUtils } = require('vx-var-utils');
+const { StringUtils, ObjectUtils } = require('vx-var-utils');
 const { pad } = StringUtils;
+const { isFunction, isError, isObject } = ObjectUtils;
 const Module_Func = 'module_func';
 const Module_Var = 'module_var';
 const Func = 'func';
@@ -286,17 +287,16 @@ class VerifyOrderImpl {
 
     function setProp(obj) {
       for (const p in obj) {
-        switch (typeof obj[p]) {
-          case 'object':
-            setProp(obj[p]);
-            break;
-          case 'undefined':
-            obj[p] = 'value is undefined';
-            break;
-          case 'function':
-            obj[p] = obj[p].toString();
-            break;
-          default:
+
+        const value = obj[p];
+        if (value === undefined) {
+          obj[p] = 'value is undefined';
+        } else if (isFunction(value)) {
+          obj[p] = value.toString();
+        } else if (isError(value)) {
+          obj[p] = { message: value.message };
+        } else if (isObject(value)) {
+          setProp(value);
         }
       }
       return obj;
@@ -308,10 +308,14 @@ class VerifyOrderImpl {
       }
       const rs /*: Array<string>*/ = [];
       callInfo.args && callInfo.args.forEach(arg => {
-        if (typeof arg === 'function') {
+        if (isFunction(arg)) {
           rs.push(arg.toString());
         } else {
-          rs.push(JSON.stringify(setProp(arg)));
+          if (isError(arg)) {
+            rs.push(`{"message":"${arg.message}"`);
+          } else {
+            rs.push(JSON.stringify(setProp(arg)));
+          }
         }
       });
       return rs.join(', ');

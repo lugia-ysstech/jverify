@@ -742,4 +742,49 @@ describe('VerifyOrder', function () {
     }
     assert.isOk(false, '未正取识别错误顺序');
   });
+
+  it('callinfo args is Error Object', () => {
+
+    const order = create();
+    const error = new Error('hello');
+    order.addModuleCallFunction('a', 'f1', {
+      context: {},
+      args: [ error ],
+    });
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.f1();
+      });
+    } catch (err) {
+      console.info(err);
+      expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1({"message":"${error.message}");   a.f1();  <-- args is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
+  it('callinfo args is object has Error attribute', () => {
+
+    const order = create();
+    const error = new Error('hello');
+    order.addModuleCallFunction('a', 'f1', {
+      context: {},
+      args: [ { err: error } ],
+    });
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.f1();
+      });
+    } catch (err) {
+      console.info(err);
+      expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1({"err":{"message":"${error.message}"}});   a.f1();  <-- args is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
 });
