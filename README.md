@@ -144,9 +144,7 @@ mockFunction也支持restore方法用于还原原有处理。
 用于进行mock对象之间顺序，以及方法mock对象的入参、this引用的检查。并给出响应错误信息的提示。
 注意：当第3个步骤出错后，不会再去检查第3步骤后的相关步骤的具体错误。因为，实际开发过程中，也是对错误的不够逐一进行调整。
 ```
-const VerifyOrder = require('../dist/VerifyOrder');
-const MockModule = require('../dist/MockModule');
-const MockFunction = require('../dist/MockFunction');
+const { VerifyOrder, mockFunction, mockObject } = require('vx-mock');
 // mock 的目标对象
 const obj = {
   f1 () {
@@ -157,16 +155,16 @@ const obj = {
 const order = VerifyOrder.create();
 
 // mock 对象
-const mockObj = MockModule.create(obj, { mockName: 'a', verifyOrder: order });
+const mockObj = mockObject.create(obj, { mockName: 'a', verifyOrder: order });
 // 模拟 方法：f1() 和 属性:v1
 mockObj.mockFunction('f1');
 mockObj.mockVar('v1');
 // mock 一个普通方法
-const mockFunc = MockFunction.create({ mockName: 'a', verifyOrder: order });
+const mockFunc = mockFunction.create({ mockName: 'f1', verifyOrder: order });
 const targetFunc = mockFunc.getFunction();
-
+const ctx = { ctx: 'ctx' };
 // 实际调用
-targetFunc('hello');
+targetFunc.call(ctx, 'hello');
 obj.f1();
 obj.v1;
 obj.f1();
@@ -176,23 +174,43 @@ obj.v1;
 // 期望调用顺序 正确调用顺序
 order.verify(obj => {
   const { a, f1 } = obj;
-  f1('hello');
+  f1('hello').withContext(ctx);
   a.f1();
   a.v1;
   a.f1();
   a.v1;
 });
 
+try {
 
-// 不正确的调用顺序
-order.verify(obj => {
-  const { a, f1 } = obj;
-  f1('hello');
-  a.f1();
-  a.v1;
-  a.f1();
-  a.v1;
-  a.v1;
-  a.v1;
-});
+  // 上下未正确
+  order.verify(obj => {
+    const { a, f1 } = obj;
+    f1('hello').withContext({});
+    a.f1();
+    a.v1;
+    a.f1();
+    a.v1;
+  });
+} catch (err) {
+  console.error(err);
+}
+
+try {
+
+  // 不正确的调用顺序
+  order.verify(obj => {
+    const { a, f1 } = obj;
+    f1('hello');
+    a.f1();
+    a.v1;
+    a.f1();
+    a.v1;
+    a.v1;
+    a.v1;
+  });
+} catch (err) {
+  console.error(err);
+}
+
 ```
