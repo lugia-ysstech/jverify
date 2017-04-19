@@ -787,4 +787,15 @@ describe('VerifyOrder', function () {
     assert.isOk(false, '未正取识别错误顺序');
   });
 
+  it('args is undefined', () => {
+    const order = create();
+    const hello = { world: 'hello' };
+    order.addModuleCallFunction('a', 'f1', {
+      context: hello,
+    });
+    order.verify(mock => {
+      const { a } = mock;
+      a.f1();
+    });
+  });
 });

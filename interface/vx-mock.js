@@ -28,7 +28,7 @@ declare module 'vx-mock' {
 
   declare type CallInfo = {
     context?: Object,
-    args: Array<any>
+    args?: Array<any>
   }
 
 

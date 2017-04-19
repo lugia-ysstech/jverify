@@ -53,9 +53,17 @@ class VerifyOrderImpl {
     this.steps.push({
       mockName,
       name: funcName,
-      callInfo: callInfo ? callInfo : { args: [] },
+      callInfo: this.checkCallInfo(callInfo),
       type: Module_Func
     });
+  }
+
+  checkCallInfo(callInfo /*: ?CallInfo*/) /*: CallInfo*/ {
+    const result = callInfo ? callInfo : { args: [] };
+    if (!result.args) {
+      result.args = [];
+    }
+    return result;
   }
 
   addModuleVar(mockName /*: string*/, attrName /*: string*/) /*: void*/ {
@@ -85,7 +93,7 @@ class VerifyOrderImpl {
     this.steps.push({
       name: FuncName,
       mockName,
-      callInfo: callInfo ? callInfo : { args: [] },
+      callInfo: this.checkCallInfo(callInfo),
       type: Func
     });
   }
@@ -120,7 +128,6 @@ class VerifyOrderImpl {
 
         if (type === Module_Func) {
           value[expectName] = (...callArgs) => {
-
             const step = this.steps[index];
             realyOrder.push({
               mockName: expectMockName,
