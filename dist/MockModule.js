@@ -11,6 +11,7 @@ class MockModuleImpl {
   /*:: target: any;*/
   /*:: orderConfig: ?VerifyOrderConfig;*/
   /*:: restore: Array<Function>;*/
+  /*:: reset: Array<Function>;*/
 
 
   constructor(module /*: Object*/, orderConfig /*:: ?: VerifyOrderConfig*/) {
@@ -19,6 +20,7 @@ class MockModuleImpl {
     }
     this.target = module;
     this.restore = [];
+    this.reset = [];
     this.orderConfig = orderConfig;
     if (orderConfig) {
       const { verifyOrder, mockName } = orderConfig;
@@ -71,38 +73,61 @@ class MockModuleImpl {
       }
       return orginal.apply(orginalContext ? orginalContext : this, args);
     };
+    let isReset = false;
 
+    function check() {
+      if (isReset) {
+        throw new Error('mockFunction已被reset，请重新调用mockFunction方法!');
+      }
+    }
+
+    function reset() {
+      check();
+      isReset = true;
+      self.target[funcName] = orginal;
+    }
+
+    this.reset.push(reset);
     const mockObj = {
+      reset,
       mock(target /*: Function*/, ctx /*:: ?: Object*/) {
+        check();
         mockTarget = target;
         context = ctx;
       },
       queryCallArgs() /*: Array<any>*/ {
+        check();
         return callArgs;
       },
       getCallArgs(index /*: number*/) /*: any*/ {
+        check();
         if (index >= callArgs.length) {
           return undefined;
         }
         return callArgs[index];
       },
       returned(arg /*: any*/) /*: void*/ {
+        check();
         returned.push(arg);
       },
       forever(arg /*: any*/) /*: void*/ {
+        check();
         foreverValue = arg;
         foreverIsOpen = true;
       },
       queryCallContext() /*: Array<Object>*/ {
+        check();
         return callContext;
       },
       getCallContext(index /*: number*/) /*: any*/ {
+        check();
         if (index >= callArgs.length) {
           return undefined;
         }
         return callContext[index];
       },
       restore() {
+        check();
         foreverValue = undefined;
         foreverIsOpen = false;
         mockTarget = undefined;
@@ -114,9 +139,11 @@ class MockModuleImpl {
         orginalContext = undefined;
       },
       callTimes() /*: number*/ {
+        check();
         return times;
       },
       mockContext(ctx /*: Object*/) /*: void*/ {
+        check();
         orginalContext = ctx;
       }
 
@@ -193,6 +220,13 @@ class MockModuleImpl {
 
     this.restore.forEach(restore => {
       restore();
+    });
+  }
+
+  resetAll() /*: void*/ {
+    this.reset = this.reset.filter(restore => {
+      restore();
+      return false;
     });
   }
 }

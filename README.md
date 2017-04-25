@@ -214,3 +214,12 @@ try {
 }
 
 ```
+##reset & resetAll
+mock对象方法的时候，存在一种情况。比如我们需要在nodejs环境下对Promise进行mock操作，可以按如下代码编写：
+```
+  const { mockObject } = require('vx-mock');
+  const globalMock = mockObject.create(global);
+  globalMock.mockFunction('Promise').mock((resolve, reject)=>{
+  });  
+```
+但是此时，即使使用restore进行还原也无法将Promise.all的方法还原回来，此时就可以通过reset或者mock对象中的resetAll方法进行还原成最原始的方法。

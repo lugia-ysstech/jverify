@@ -10,6 +10,7 @@ declare module 'vx-mock' {
      *还原为原始状态
      */
     restore(): void;
+
     /*
      * 符合调用次数
      */
@@ -60,6 +61,10 @@ declare module 'vx-mock' {
      * 直接mock掉原有方法的上下文,不会影响 mock() 指定的ctx.
      */
     mockContext(ctx: Object): void;
+    /*
+     * 还原为原始对象，这个与restore的区别在于,restore后还可继续进行mock、returned操作，而reset则是还原为原始的状态。如需mock则需要重新进行mock.
+     */
+    reset(): void;
   }
 
   declare interface MockVarReulst extends BaseMockRequire {
@@ -84,6 +89,7 @@ declare module 'vx-mock' {
      * 重置mock目标对象的所有方法或变量。变为使用原有方法及原有值进行处理
      */
     restoreAll(): void;
+    resetAll(): void;
   }
 
   declare type VerifyOrderConfig = {

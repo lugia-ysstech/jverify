@@ -501,4 +501,113 @@ describe('MockModule', function () {
     expect(obj.age).to.be.equal('a');
   });
 
+  it('mockFunction reset', () => {
+    const obj = {
+      f1 () {
+
+      },
+    };
+    const myName = 'f1';
+    obj.f1.myName = myName;
+
+    const objMock = create(obj);
+    const mockFunction = objMock.mockFunction(myName);
+
+    expect(obj.f1.myName).to.be.undefined;
+    mockFunction.reset();
+    expect(obj.f1.myName).to.be.equal(myName);
+  });
+  it('mockFunction reset after if mock is Error', () => {
+    const obj = {
+      f1 () {
+
+      },
+    };
+    const myName = 'f1';
+    obj.f1.myName = myName;
+
+    const objMock = create(obj);
+    const mockFunction = objMock.mockFunction(myName);
+    mockFunction.reset();
+    expect(() => {
+      mockFunction.returned(1);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.mock(() => 100);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.forever(101);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.queryCallArgs();
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.getCallArgs(1);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.queryCallContext();
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.getCallContext(1);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.restore();
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.callTimes();
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.mockContext({});
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.reset();
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+  });
+
+
+  it('resetAll', () => {
+    const obj = {
+      f1 () {
+
+      },
+      f2 () {
+
+      },
+    };
+    const myName = 'f1';
+    obj.f1.myName = myName;
+    obj.f2.myName = myName;
+    const objMock = create(obj);
+    objMock.mockFunction('f1');
+    objMock.mockFunction('f2');
+
+    expect(obj.f1.myName).to.be.undefined;
+    expect(obj.f2.myName).to.be.undefined;
+    objMock.resetAll();
+
+    expect(obj.f1.myName).to.be.equal(myName);
+    expect(obj.f2.myName).to.be.equal(myName);
+  });
+
+  it('resetAll after need clear ', () => {
+    const obj = {
+      f1 () {
+
+      },
+      f2 () {
+
+      },
+    };
+    const myName = 'f1';
+    obj.f1.myName = myName;
+    obj.f2.myName = myName;
+    const objMock = create(obj);
+    objMock.mockFunction('f1');
+    objMock.mockFunction('f2');
+
+    objMock.resetAll();
+    objMock.resetAll();
+
+  });
+
 });
