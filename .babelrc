@@ -1,6 +1,5 @@
 {
   "plugins": [
-    "transform-flow-comments",
-    "transform-async-to-generator"
+    "transform-flow-comments"
   ]
 }
