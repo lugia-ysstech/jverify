@@ -44,7 +44,7 @@
     "thunkify": "^2.1.2"
   },
   "dependencies": {
-    "vx-var-utils": "git+http://192.168.101.103:xnode/vx-var-utils.git",
+    "vx-var-utils": "git+http://192.168.101.103/xnode/vx-var-utils.git",
     "deep-equal": "^1.0.1"
   },
   "keywords": [
