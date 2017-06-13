@@ -5,7 +5,7 @@
 [include]
 [libs]
 flow-typed/
-interface/
+./src/interface/
 node_modules/vx-var-utils/interface/
 [options]
 
