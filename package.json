@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
-    "vx-var-utils": "git+http://192.168.101.103/xnode/vx-var-utils.git#master"
+    "vx-var-utils": "0.5.0"
   },
   "author": "yss",
   "license": "MIT"
