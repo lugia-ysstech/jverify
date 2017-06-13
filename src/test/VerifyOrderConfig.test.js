@@ -3,8 +3,8 @@
  * @flow
  */
 const chai = require('chai');
-const { create } = require('../dist/VerifyOrderConfig');
-const { VerifyOrderConfig, VerifyOrder } = require('../dist');
+const { create } = require('../lib/VerifyOrderConfig');
+const { VerifyOrderConfig, VerifyOrder } = require('../lib');
 const { expect } = chai;
 
 describe('VerifyOrderConfig', function () {

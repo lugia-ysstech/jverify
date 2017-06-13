@@ -3,7 +3,7 @@
  * @flow
  */
 const chai = require('chai');
-const { create } = require('../dist/VerifyOrder');
+const { create } = require('../lib/VerifyOrder');
 
 const { assert } = chai;
 const { expect } = chai;
