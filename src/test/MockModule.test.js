@@ -305,7 +305,7 @@ describe('MockModule', function () {
     obj.age;
     obj.age;
     obj.age;
-    mockVar.mock(1, {});
+    mockVar.mock(1);
     mockVar.returned('a');
 
     mockVar.restore();
