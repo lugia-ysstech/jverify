@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "用于单元测试对象或方法打桩",
   "scripts": {
+    "build": "vx-bin build",
     "dist": "vx-bin build && vx-bin publish",
     "dev": "vx-bin dev",
     "test-local": "vx-bin test",
