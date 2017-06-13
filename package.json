@@ -14,8 +14,8 @@
     "vx-cli": "^0.1.0"
   },
   "dependencies": {
-    "vx-var-utils": "git+http://192.168.101.103/xnode/vx-var-utils.git#master",
-    "deep-equal": "^1.0.1"
+    "deep-equal": "^1.0.1",
+    "vx-var-utils": "git+http://192.168.101.103/xnode/vx-var-utils.git#master"
   },
   "author": "yss",
   "license": "MIT"

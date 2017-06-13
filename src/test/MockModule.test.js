@@ -114,7 +114,7 @@ describe('MockModule', function () {
 
   it('mockFunction verify CallArgs', () => {
     const user = {
-      add () {
+      add (a /*: any*/, b /*: any*/) {
       },
     };
     const userMock = create(user);
@@ -180,7 +180,7 @@ describe('MockModule', function () {
 
   it('mockFunction returned highter mock', () => {
     const user = {
-      add () {
+      add (a /*: any*/, b /*: any*/) {
 
       },
     };
@@ -210,7 +210,7 @@ describe('MockModule', function () {
     }
     const target = new Test();
 
-    const order = VerifyOrder.create({});
+    const order = VerifyOrder.create();
 
     const mockObj = create(target, { mockName: 'target', verifyOrder: order });
 
@@ -227,9 +227,9 @@ describe('MockModule', function () {
     class Test {
       f1 () {}
     }
-    const target = new Test(1);
+    const target = new Test();
 
-    const order = VerifyOrder.create({});
+    const order = VerifyOrder.create();
 
     const mockObj = create(target, { mockName: 'target', verifyOrder: order });
 
@@ -438,7 +438,7 @@ describe('MockModule', function () {
     }
     const target = new Test(1);
 
-    const order = VerifyOrder.create({});
+    const order = VerifyOrder.create();
 
     const mockObj = create(target, { mockName: 'target', verifyOrder: order });
 
@@ -461,7 +461,7 @@ describe('MockModule', function () {
     }
     const target = new Test(1);
 
-    const order = VerifyOrder.create({});
+    const order = VerifyOrder.create();
 
     const mockObj = create(target, { mockName: 'target', verifyOrder: order });
 

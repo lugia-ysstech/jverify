@@ -701,9 +701,10 @@ describe('VerifyOrder', function () {
   });
   it('test callInfo  args is as function', () => {
     const order = create();
+    const f1 = () => { console.info('hellos'); };
     order.addModuleCallFunction('a', 'f1', {
       context: {},
-      args: [ () => { console.info('hellos'); } ],
+      args: [ f1 ],
     });
     try {
       order.verify(obj => {
@@ -711,22 +712,24 @@ describe('VerifyOrder', function () {
         a.f1();
       });
     } catch (err) {
-      console.info(err);
-      expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
-1.  a.f1(() => { console.info('hellos'); });   a.f1();  <-- args is error`);
+      const f1Str = f1.toString();
+      expect(err.message.replace(/\\n/g, '\n')).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1(${f1Str});   a.f1();  <-- args is error`);
       return;
     }
     assert.isOk(false, '未正取识别错误顺序');
   });
   it('test callInfo  args is object  it has function', () => {
     const order = create();
+    const f1 = () => { console.info('hellos'); };
+    const f2 = () => {
+
+    }
     order.addModuleCallFunction('a', 'f1', {
       context: {},
       args: [ {
-        f1: () => { console.info('hellos'); },
-        f2 () {
-
-        },
+        f1,
+        f2,
       } ],
     });
     try {
@@ -736,8 +739,10 @@ describe('VerifyOrder', function () {
       });
     } catch (err) {
       console.info(err);
-      expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
-1.  a.f1({"f1":"() => { console.info('hellos'); }","f2":"f2() {\\n\\n        }"});   a.f1();  <-- args is error`);
+      const f1Str = f1.toString();
+      const f2Str = f2.toString();
+      expect(err.message.replace(/\\n/g, '\n')).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1({"f1":"` + f1Str + `","f2":"${f2Str}"});   a.f1();  <-- args is error`);
       return;
     }
     assert.isOk(false, '未正取识别错误顺序');
