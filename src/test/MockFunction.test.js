@@ -3,7 +3,7 @@
  *
  */
 const chai = require('chai');
-const { mockFunction, VerifyOrder } = require('../dist/index');
+const { mockFunction, VerifyOrder } = require('../lib/index');
 const { create } = mockFunction;
 const { expect } = chai;
 

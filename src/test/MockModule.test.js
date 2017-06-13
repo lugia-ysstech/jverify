@@ -3,7 +3,7 @@
  * @flow
  */
 const chai = require('chai');
-const { mockObject, VerifyOrder } = require('../dist/index');
+const { mockObject, VerifyOrder } = require('../lib/index');
 const { create } = mockObject;
 const { expect } = chai;
 
