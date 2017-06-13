@@ -724,7 +724,7 @@ describe('VerifyOrder', function () {
     const f1 = () => { console.info('hellos'); };
     const f2 = () => {
 
-    }
+    };
     order.addModuleCallFunction('a', 'f1', {
       context: {},
       args: [ {

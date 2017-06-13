@@ -114,7 +114,8 @@ describe('MockModule', function () {
 
   it('mockFunction verify CallArgs', () => {
     const user = {
-      add (a /*: any*/, b /*: any*/) {
+      add (a /* : any*/, b /* : any*/) {
+        console.info(a, b);
       },
     };
     const userMock = create(user);
@@ -180,8 +181,8 @@ describe('MockModule', function () {
 
   it('mockFunction returned highter mock', () => {
     const user = {
-      add (a /*: any*/, b /*: any*/) {
-
+      add (a: any, b: any) {
+        console.info(a, b);
       },
     };
     const userMock = create(user);
