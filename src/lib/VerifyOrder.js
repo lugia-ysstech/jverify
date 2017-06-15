@@ -295,7 +295,7 @@ class VerifyOrderImpl {
       mock.__verify__(err);
       return;
     }
-    mock.__verify__();
+    mock.__verify__ && mock.__verify__();
   }
 
   generateMsg (expectStep: Array<OrderStep>, actulyStep: Array<OrderStep>, error: VerifyResultErrorInfo): string {

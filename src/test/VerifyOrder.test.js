@@ -803,4 +803,9 @@ describe('VerifyOrder', function () {
       a.f1();
     });
   });
+  it('verify is empty', () => {
+    const order = create();
+    order.verify(() => {
+    });
+  });
 });
