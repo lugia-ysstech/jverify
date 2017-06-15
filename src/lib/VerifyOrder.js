@@ -292,7 +292,11 @@ class VerifyOrderImpl {
     try {
       callback(mock);
     } catch (err) {
-      mock.__verify__(err);
+      if (mock.__verify__) {
+        mock.__verify__(err);
+      } else {
+        throw err;
+      }
       return;
     }
     mock.__verify__ && mock.__verify__();

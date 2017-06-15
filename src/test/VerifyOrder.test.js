@@ -808,4 +808,17 @@ describe('VerifyOrder', function () {
     order.verify(() => {
     });
   });
+  it('verify is empty and verify method has error', () => {
+    const order = create();
+    const msg = 'hello';
+    try {
+      order.verify(() => {
+        throw new Error(msg);
+      });
+    } catch (err) {
+      expect(() => { throw err; }).throw(Error, msg);
+      return;
+    }
+    expect(true).to.be.false;
+  });
 });
