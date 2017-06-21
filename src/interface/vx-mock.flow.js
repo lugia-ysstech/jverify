@@ -24,7 +24,10 @@ declare module 'vx-mock' {
      * 永远返回某个值
      */
     forever(arg: any): void;
-
+    /*
+     * 直接抛出异常
+     */
+    error(err: string | Error): void;
   }
 
   declare type CallInfo = {
@@ -71,7 +74,7 @@ declare module 'vx-mock' {
     /*
      * 设置桩函数
      */
-    mock(func: Object | string | number): void;
+    mock(func: Function): void;
   }
 
   declare interface MockModule {

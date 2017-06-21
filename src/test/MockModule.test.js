@@ -279,8 +279,9 @@ describe('MockModule', function () {
     const userMock = create(obj);
     const mockVar = userMock.mockVar('age');
     expect(obj.age).to.be.equal(15);
-    mockVar.mock(18);
-    expect(obj.age).to.be.equal(18);
+    const result = 1000;
+    mockVar.mock(() => result);
+    expect(obj.age).to.be.equal(result);
 
   });
   it('mockVar calltimes', () => {
@@ -306,7 +307,7 @@ describe('MockModule', function () {
     obj.age;
     obj.age;
     obj.age;
-    mockVar.mock(1);
+    mockVar.mock(() => 1);
     mockVar.returned('a');
 
     mockVar.restore();
@@ -338,7 +339,7 @@ describe('MockModule', function () {
     };
     const userMock = create(obj);
     const mockVar = userMock.mockVar('age');
-    mockVar.mock(18);
+    mockVar.mock(() => 18);
     mockVar.returned(17);
     mockVar.returned(16);
     expect(obj.age).to.be.equal(17);
@@ -606,8 +607,91 @@ describe('MockModule', function () {
     objMock.resetAll();
 
     expect(() => {
-      f1Mock.forever(100);
+      f1Mock.mock(() => {});
     }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      f1Mock.queryCallArgs();
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      f1Mock.getCallArgs(0);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      f1Mock.returned(100);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      f1Mock.queryCallContext();
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      f1Mock.getCallContext(0);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      f1Mock.restore();
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      f1Mock.callTimes();
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      f1Mock.mockContext({});
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      f1Mock.error('hll');
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+  });
+
+  it('mockFunction error for string type', () => {
+    const obj = {
+      f1 () {
+
+      },
+    };
+    const objMock = create(obj);
+    const f1Mock = objMock.mockFunction('f1');
+    const errMsg = 'hello error';
+    f1Mock.error(errMsg);
+    expect(() => {
+      obj.f1();
+    }).throw(Error, errMsg);
+  });
+
+  it('mockFunction error for Error Type', () => {
+    const obj = {
+      f1 () {
+
+      },
+    };
+    const objMock = create(obj);
+    const f1Mock = objMock.mockFunction('f1');
+    const errMsg = 'hello error';
+    f1Mock.error(new Error(errMsg));
+    expect(() => {
+      obj.f1();
+    }).throw(Error, errMsg);
+  });
+
+
+  it('mockVar error for string type', () => {
+    const obj = {
+      name: 'hello',
+    };
+    const objMock = create(obj);
+    const nameMock = objMock.mockVar('name');
+    const errMsg = 'hello error';
+    nameMock.error(errMsg);
+    expect(() => {
+      obj.name;
+    }).throw(Error, errMsg);
+  });
+  it('mockVar error for Error type', () => {
+    const obj = {
+      name: 'hello',
+    };
+    const objMock = create(obj);
+    const nameMock = objMock.mockVar('name');
+    const errMsg = 'hello error';
+    nameMock.error(new Error(errMsg));
+    expect(() => {
+      obj.name;
+    }).throw(Error, errMsg);
   });
 
 });

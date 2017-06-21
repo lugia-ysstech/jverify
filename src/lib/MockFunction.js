@@ -65,6 +65,9 @@ class MockFunctionImpl {
       forever (arg: any): void {
         mockFunctionResult.forever(arg);
       },
+      error (err: string | Error): void {
+        mockFunctionResult.error(err);
+      },
     };
 
   }

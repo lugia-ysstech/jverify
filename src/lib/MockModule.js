@@ -87,15 +87,15 @@ class MockModuleImpl {
       self.target[ funcName ] = orginal;
     }
 
-
+    const mock = (target: Function, ctx?: Object) => {
+      check();
+      mockTarget = target;
+      context = ctx;
+    };
     this.reset.push(reset);
     const mockObj = {
       reset,
-      mock (target: Function, ctx?: Object) {
-        check();
-        mockTarget = target;
-        context = ctx;
-      },
+      mock,
       queryCallArgs (): Array<any> {
         check();
         return callArgs;
@@ -147,6 +147,16 @@ class MockModuleImpl {
         check();
         orginalContext = ctx;
       },
+      error (err: string | Error): void {
+        check();
+        mock(() => {
+          if (typeof err === 'string') {
+            throw new Error(err);
+          }
+          throw err;
+        });
+
+      },
 
     };
     this.restore.push(() => {
@@ -185,16 +195,17 @@ class MockModuleImpl {
           return returned.shift();
         }
         if (isMock) {
-          return mockTarget;
+          return mockTarget();
         }
         return orginal;
       },
     });
+    const mock = func => {
+      isMock = true;
+      mockTarget = func;
+    };
     const mockObj = {
-      mock (arg) {
-        isMock = true;
-        mockTarget = arg;
-      },
+      mock,
       forever (arg: any): void {
         foreverIsOpen = true;
         foreverValue = arg;
@@ -211,6 +222,14 @@ class MockModuleImpl {
       },
       callTimes (): number {
         return times;
+      },
+      error (err: string | Error): void {
+        mock(() => {
+          if (typeof err === 'string') {
+            throw new Error(err);
+          }
+          throw err;
+        });
       },
     };
     this.restore.push(() => {
