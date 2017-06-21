@@ -590,7 +590,7 @@ describe('MockModule', function () {
     expect(obj.f2.myName).to.be.equal(myName);
   });
 
-  it('resetAll after need clear ', () => {
+  it('resetAll after need check ', () => {
     const obj = {
       f1 () {
 
@@ -599,16 +599,15 @@ describe('MockModule', function () {
 
       },
     };
-    const myName = 'f1';
-    obj.f1.myName = myName;
-    obj.f2.myName = myName;
     const objMock = create(obj);
-    objMock.mockFunction('f1');
-    objMock.mockFunction('f2');
-
+    const f1Mock = objMock.mockFunction('f1');
+    f1Mock.forever(100);
+    expect(obj.f1()).to.be.equal(100);
     objMock.resetAll();
-    objMock.resetAll();
 
+    expect(() => {
+      f1Mock.forever(100);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
   });
 
 });
