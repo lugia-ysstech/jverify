@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "chai": "3.5",
-    "vx-cli": "^0.1.0"
+    "vx-bin": "^0.1.6"
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
