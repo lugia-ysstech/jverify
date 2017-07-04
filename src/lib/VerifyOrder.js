@@ -412,7 +412,8 @@ class VerifyOrderImpl {
 
 
   isArgsEql (args?: Array<any> = [], callArgs?: Array<any> = []) {
-
+    const cloneArgs = [];
+    Array.prototype.push.apply(cloneArgs, args);
     callArgs && callArgs.forEach((item, index) => {
       let isEqual = false;
       switch (item) {
@@ -448,9 +449,9 @@ class VerifyOrderImpl {
           break;
         default:
       }
-      isEqual && (args[ index ] = item);
+      isEqual && (cloneArgs[ index ] = item);
     });
-    return deepEqual(args, callArgs);
+    return deepEqual(cloneArgs, callArgs);
   }
 
   withContext (callInfo ?: CallInfo, verifyResult: VerifyResult, index: number, self: VerifyOrderImpl) {

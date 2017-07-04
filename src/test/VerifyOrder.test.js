@@ -940,11 +940,11 @@ describe('VerifyOrder', function () {
     expect(order.isArgsEql([ regexp ], [ RegExp ])).to.be.true;
     expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
 
-
+    const args = [ number, string, bool, error, date, func, array ];
     expect(order.isArgsEql(
-      [ number, string, bool, error, date, func, array ],
-      [ number, string, bool, error, date, func, array ])).to.be.true;
-
+      args,
+      [ Any, Any, Any, Any, Any, Any, Any ])).to.be.true;
+    expect(args).to.be.eql([ number, string, bool, error, date, func, array ]);
   });
 
 });
