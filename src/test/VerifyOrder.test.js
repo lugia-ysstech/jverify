@@ -855,6 +855,7 @@ describe('VerifyOrder', function () {
     expect(order.isArgsEql(
       [ number, string, bool, error, date, func, array ],
       [ Any, Any, Any, Any, Any, Any, Any ])).to.be.true;
+
     expect(order.isArgsEql([ number ], [ Number ])).to.be.true;
     expect(order.isArgsEql([ string ], [ Number ])).to.be.false;
     expect(order.isArgsEql([ bool ], [ Number ])).to.be.false;
@@ -936,9 +937,13 @@ describe('VerifyOrder', function () {
     expect(order.isArgsEql([ error ], [ RegExp ])).to.be.false;
     expect(order.isArgsEql([ date ], [ RegExp ])).to.be.false;
     expect(order.isArgsEql([ func ], [ RegExp ])).to.be.false;
-    expect(order.isArgsEql([ regexp ], [ RegExp ])).to.be.false;
+    expect(order.isArgsEql([ regexp ], [ RegExp ])).to.be.true;
     expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
-    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.true;
+
+
+    expect(order.isArgsEql(
+      [ number, string, bool, error, date, func, array ],
+      [ number, string, bool, error, date, func, array ])).to.be.true;
 
   });
 
