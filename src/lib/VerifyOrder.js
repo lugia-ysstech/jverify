@@ -25,6 +25,17 @@ const Module_Var = 'module_var';
 const Func = 'func';
 const FuncName = '____';
 
+const FunctionSymbol = Symbol('Function');
+const StringSymbol = Symbol('String');
+const NumberSymbol = Symbol('Number');
+const BooleanSymbol = Symbol('Boolean');
+const DateSymbol = Symbol('Date');
+const AnySymbol = Symbol('Any');
+const Errorymbol = Symbol('Error');
+const ArraySymbol = Symbol('Array');
+const ObjectSymbol = Symbol('Object');
+const RegexpSymbol = Symbol('Regexp');
+
 class VerifyOrderImpl {
 
   mockNames: VerifyOrderMockList;
@@ -400,9 +411,45 @@ class VerifyOrderImpl {
   }
 
 
-  isArgsEql (args, callArgs) {
+  isArgsEql (args?: Array<any> = [], callArgs?: Array<any> = []) {
 
-
+    callArgs && callArgs.forEach((item, index) => {
+      let isEqual = false;
+      switch (item) {
+        case NumberSymbol:
+          ObjectUtils.isNumber(args[ index ]) && (isEqual = true);
+          break;
+        case StringSymbol:
+          ObjectUtils.isString(args[ index ]) && (isEqual = true);
+          break;
+        case BooleanSymbol:
+          ObjectUtils.isBoolean(args[ index ]) && (isEqual = true);
+          break;
+        case DateSymbol:
+          ObjectUtils.isDate(args[ index ]) && (isEqual = true);
+          break;
+        case AnySymbol:
+          isEqual = true;
+          break;
+        case Errorymbol:
+          ObjectUtils.isError(args[ index ]) && (isEqual = true);
+          break;
+        case FunctionSymbol:
+          ObjectUtils.isFunction(args[ index ]) && (isEqual = true);
+          break;
+        case ObjectSymbol:
+          ObjectUtils.isObject(args[ index ]) && (isEqual = true);
+          break;
+        case ArraySymbol:
+          ObjectUtils.isArray(args[ index ]) && (isEqual = true);
+          break;
+        case RegexpSymbol:
+          ObjectUtils.isRegExp(args[ index ]) && (isEqual = true);
+          break;
+        default:
+      }
+      isEqual && (args[ index ] = item);
+    });
     return deepEqual(args, callArgs);
   }
 
@@ -448,9 +495,22 @@ class VerifyOrderImpl {
   }
 }
 
-const exportObj: VerifyOrderFactory = {
+const exportObj = {
   create (): VerifyOrder {
     return new VerifyOrderImpl();
   },
+  createOrgial (): VerifyOrderImpl {
+    return new VerifyOrderImpl();
+  },
+  Function: FunctionSymbol,
+  String: StringSymbol,
+  Number: NumberSymbol,
+  Boolean: BooleanSymbol,
+  Date: DateSymbol,
+  Any: AnySymbol,
+  Error: Errorymbol,
+  ObjectUtils: ObjectSymbol,
+  Array: ArraySymbol,
+  RegExp: RegexpSymbol,
 };
 module.exports = exportObj;

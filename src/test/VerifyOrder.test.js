@@ -3,7 +3,12 @@
  * @flow
  */
 const chai = require('chai');
-const { create } = require('../lib/VerifyOrder');
+const VerifyOrder = require('../lib/VerifyOrder');
+
+const {
+  create,
+  createOrgial,
+} = VerifyOrder;
 
 const { assert } = chai;
 const { expect } = chai;
@@ -821,4 +826,120 @@ describe('VerifyOrder', function () {
     }
     expect(true).to.be.false;
   });
+
+
+  it('verify for arg is any', () => {
+    const { Any } = VerifyOrder;
+    const order = create();
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ 1, 2 ],
+    });
+    order.verify(({ a }) => {
+      a.f1(Any, Any);
+    });
+  });
+
+  it('isArgsEql for Type', () => {
+    const { Any, Number, Boolean, Error: ErrorT, String, Date: DateT, Function, Array: ArrayT, RegExp } = VerifyOrder;
+    const order = createOrgial();
+    const number = 1;
+    const string = 'ligx';
+    const bool = false;
+    const error = new Error('aa');
+    const date = new Date();
+    const regexp = /a/;
+    const func = () => {
+
+    };
+    const array = [ 'ligx' ];
+    expect(order.isArgsEql(
+      [ number, string, bool, error, date, func, array ],
+      [ Any, Any, Any, Any, Any, Any, Any ])).to.be.true;
+    expect(order.isArgsEql([ number ], [ Number ])).to.be.true;
+    expect(order.isArgsEql([ string ], [ Number ])).to.be.false;
+    expect(order.isArgsEql([ bool ], [ Number ])).to.be.false;
+    expect(order.isArgsEql([ error ], [ Number ])).to.be.false;
+    expect(order.isArgsEql([ date ], [ Number ])).to.be.false;
+    expect(order.isArgsEql([ func ], [ Number ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ Number ])).to.be.false;
+    expect(order.isArgsEql([ regexp ], [ Number ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
+
+
+    expect(order.isArgsEql([ number ], [ String ])).to.be.false;
+    expect(order.isArgsEql([ string ], [ String ])).to.be.true;
+    expect(order.isArgsEql([ bool ], [ String ])).to.be.false;
+    expect(order.isArgsEql([ error ], [ String ])).to.be.false;
+    expect(order.isArgsEql([ date ], [ String ])).to.be.false;
+    expect(order.isArgsEql([ func ], [ String ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ String ])).to.be.false;
+    expect(order.isArgsEql([ regexp ], [ String ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
+
+
+    expect(order.isArgsEql([ number ], [ Boolean ])).to.be.false;
+    expect(order.isArgsEql([ string ], [ Boolean ])).to.be.false;
+    expect(order.isArgsEql([ bool ], [ Boolean ])).to.be.true;
+    expect(order.isArgsEql([ error ], [ Boolean ])).to.be.false;
+    expect(order.isArgsEql([ date ], [ Boolean ])).to.be.false;
+    expect(order.isArgsEql([ func ], [ Boolean ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ Boolean ])).to.be.false;
+    expect(order.isArgsEql([ regexp ], [ Boolean ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
+
+
+    expect(order.isArgsEql([ number ], [ ErrorT ])).to.be.false;
+    expect(order.isArgsEql([ string ], [ ErrorT ])).to.be.false;
+    expect(order.isArgsEql([ bool ], [ ErrorT ])).to.be.false;
+    expect(order.isArgsEql([ error ], [ ErrorT ])).to.be.true;
+    expect(order.isArgsEql([ date ], [ ErrorT ])).to.be.false;
+    expect(order.isArgsEql([ func ], [ ErrorT ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ ErrorT ])).to.be.false;
+    expect(order.isArgsEql([ regexp ], [ ErrorT ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
+
+
+    expect(order.isArgsEql([ number ], [ DateT ])).to.be.false;
+    expect(order.isArgsEql([ string ], [ DateT ])).to.be.false;
+    expect(order.isArgsEql([ bool ], [ DateT ])).to.be.false;
+    expect(order.isArgsEql([ error ], [ DateT ])).to.be.false;
+    expect(order.isArgsEql([ date ], [ DateT ])).to.be.true;
+    expect(order.isArgsEql([ func ], [ DateT ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ DateT ])).to.be.false;
+    expect(order.isArgsEql([ regexp ], [ DateT ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
+
+
+    expect(order.isArgsEql([ number ], [ Function ])).to.be.false;
+    expect(order.isArgsEql([ string ], [ Function ])).to.be.false;
+    expect(order.isArgsEql([ bool ], [ Function ])).to.be.false;
+    expect(order.isArgsEql([ error ], [ Function ])).to.be.false;
+    expect(order.isArgsEql([ date ], [ Function ])).to.be.false;
+    expect(order.isArgsEql([ func ], [ Function ])).to.be.true;
+    expect(order.isArgsEql([ array ], [ Function ])).to.be.false;
+    expect(order.isArgsEql([ regexp ], [ Function ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
+
+    expect(order.isArgsEql([ number ], [ ArrayT ])).to.be.false;
+    expect(order.isArgsEql([ string ], [ ArrayT ])).to.be.false;
+    expect(order.isArgsEql([ bool ], [ ArrayT ])).to.be.false;
+    expect(order.isArgsEql([ error ], [ ArrayT ])).to.be.false;
+    expect(order.isArgsEql([ date ], [ ArrayT ])).to.be.false;
+    expect(order.isArgsEql([ func ], [ ArrayT ])).to.be.false;
+    expect(order.isArgsEql([ regexp ], [ ArrayT ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ ArrayT ])).to.be.true;
+    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
+
+    expect(order.isArgsEql([ number ], [ RegExp ])).to.be.false;
+    expect(order.isArgsEql([ string ], [ RegExp ])).to.be.false;
+    expect(order.isArgsEql([ bool ], [ RegExp ])).to.be.false;
+    expect(order.isArgsEql([ error ], [ RegExp ])).to.be.false;
+    expect(order.isArgsEql([ date ], [ RegExp ])).to.be.false;
+    expect(order.isArgsEql([ func ], [ RegExp ])).to.be.false;
+    expect(order.isArgsEql([ regexp ], [ RegExp ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.false;
+    expect(order.isArgsEql([ array ], [ RegExp ])).to.be.true;
+
+  });
+
 });

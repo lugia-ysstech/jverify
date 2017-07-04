@@ -1,23 +1,23 @@
 {
-  "name": "vx-mock",
-  "version": "0.1.0",
-  "description": "用于单元测试对象或方法打桩",
-  "scripts": {
-    "build": "vx-bin build",
-    "dist": "vx-bin build && vx-bin publish",
-    "dev": "vx-bin dev",
-    "test-local": "vx-bin test",
-    "test": "vx-bin flow && vx-bin lint && vx-bin test",
-    "cov": "vx-bin cov"
-  },
-  "devDependencies": {
-    "chai": "3.5",
-    "vx-bin": "^0.1.6"
-  },
-  "dependencies": {
-    "deep-equal": "^1.0.1",
-    "vx-var-utils": "^0.5.0"
-  },
-  "author": "yss",
-  "license": "MIT"
+    "name": "vx-mock",
+    "version": "0.1.1",
+    "description": "用于单元测试对象或方法打桩",
+    "scripts": {
+        "build": "vx-bin build",
+        "dist": "vx-bin build && vx-bin publish",
+        "dev": "vx-bin dev --ig",
+        "test-local": "vx-bin test",
+        "test": "vx-bin flow && vx-bin lint && vx-bin test",
+        "cov": "vx-bin cov"
+    },
+    "devDependencies": {
+        "chai": "3.5",
+        "vx-bin": "^0.1.10"
+    },
+    "dependencies": {
+        "deep-equal": "^1.0.1",
+        "vx-var-utils": "^0.5.2"
+    },
+    "author": "yss",
+    "license": "MIT"
 }

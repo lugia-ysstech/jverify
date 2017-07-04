@@ -144,6 +144,16 @@ declare module 'vx-mock' {
 
   declare interface VerifyOrderFactory {
     create(): VerifyOrder;
+    Function: Symbol,
+    String: Symbol,
+    Number: Symbol,
+    Boolean: Symbol,
+    Date: Symbol,
+    Any: Symbol,
+    Error: Symbol,
+    RegExp: Symbol,
+    ObjectUtils: Symbol,
+    Array: Symbol,
   }
 
   declare interface VerifyOrderConfigFactory {
