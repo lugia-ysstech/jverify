@@ -154,6 +154,7 @@ declare module 'vx-mock' {
     RegExp: Symbol,
     ObjectUtils: Symbol,
     Array: Symbol,
+    AsyncFunction: Symbol,
   }
 
   declare interface VerifyOrderConfigFactory {

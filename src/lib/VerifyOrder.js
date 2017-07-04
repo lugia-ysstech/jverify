@@ -3,18 +3,18 @@
  * @flow
  */
 import type {
-  VerifyOrder,
-  VerifyOrderFactory,
   CallInfo,
-  VerifyOrderMockList,
-  VerifyOrderMock,
+  GenerateErrorFuncArg,
   ModuleVarStatus,
   OrderStep,
-  VerifyResult,
-  VerifyResultErrorInfo,
-  GenerateErrorFuncArg,
   VarNameObserve,
-} from 'vx-mock';
+  VerifyOrder,
+  VerifyOrderFactory,
+  VerifyOrderMock,
+  VerifyOrderMockList,
+  VerifyResult,
+  VerifyResultErrorInfo
+} from "vx-mock";
 
 const deepEqual = require('deep-equal');
 const { StringUtils, ObjectUtils } = require('vx-var-utils');
@@ -35,6 +35,7 @@ const Errorymbol = Symbol('Error');
 const ArraySymbol = Symbol('Array');
 const ObjectSymbol = Symbol('Object');
 const RegexpSymbol = Symbol('Regexp');
+const AsyncFunctionSymbol = Symbol('AsyncFunction');
 
 class VerifyOrderImpl {
 
@@ -447,6 +448,9 @@ class VerifyOrderImpl {
         case RegexpSymbol:
           ObjectUtils.isRegExp(args[ index ]) && (isEqual = true);
           break;
+        case AsyncFunctionSymbol:
+          ObjectUtils.isAsyncFunction(args[ index ]) && (isEqual = true);
+          break;
         default:
       }
       isEqual && (cloneArgs[ index ] = item);
@@ -513,5 +517,6 @@ const exportObj = {
   ObjectUtils: ObjectSymbol,
   Array: ArraySymbol,
   RegExp: RegexpSymbol,
+  AsyncFunction: AsyncFunctionSymbol,
 };
 module.exports = exportObj;
