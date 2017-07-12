@@ -224,6 +224,39 @@ describe('MockModule', function () {
     expect(target.func()).to.be.equal(2);
     expect(target.func()).to.be.equal(3);
   });
+
+  it('mockFunction delayReturned ', async () => {
+    class Test {
+      func () {
+        return this.ds();
+      }
+
+      ds () {
+
+      }
+    }
+    const target = new Test();
+
+    const order = VerifyOrder.create();
+
+    const mockObj = create(target, { mockName: 'target', verifyOrder: order });
+
+    const funcMock = mockObj.mockFunction('ds');
+    const timeout1 = 50;
+    const timeout2 = 80;
+    const timeout3 = 150;
+    funcMock.delayReturned(1, timeout1);
+    funcMock.delayReturned(2, timeout2);
+    funcMock.delayReturned(3, timeout3);
+    const time = new Date();
+    expect(await target.func()).to.be.equal(1);
+    expect(new Date() - time >= timeout1).to.be.true;
+    expect(await target.func()).to.be.equal(2);
+    expect(new Date() - time >= timeout2).to.be.true;
+    expect(await target.func()).to.be.equal(3);
+    expect(new Date() - time >= timeout3).to.be.true;
+  });
+
   it('mockFunction forever ', () => {
     class Test {
       f1 () {}
@@ -433,8 +466,9 @@ describe('MockModule', function () {
 
   it('mockVar returned ', () => {
     class Test {
-      /* :: num:number;*/
-      constructor (num /* : number*/) {
+      num: number;
+
+      constructor (num: number) {
         this.num = num;
       }
     }
@@ -452,6 +486,35 @@ describe('MockModule', function () {
     expect(target.num).to.be.equal(1);
     expect(target.num).to.be.equal(2);
     expect(target.num).to.be.equal(3);
+  });
+  it('mockVar delayReturned ', async () => {
+    class Test {
+      num: number;
+
+      constructor (num: number) {
+        this.num = num;
+      }
+    }
+    const target = new Test(1);
+
+    const order = VerifyOrder.create();
+
+    const mockObj = create(target, { mockName: 'target', verifyOrder: order });
+
+    const funcMock = mockObj.mockVar('num');
+    const timeout1 = 50;
+    const timeout2 = 80;
+    const timeout3 = 150;
+    funcMock.delayReturned(1, timeout1);
+    funcMock.delayReturned(2, timeout2);
+    funcMock.delayReturned(3, timeout3);
+    const time = new Date();
+    expect(await target.num).to.be.equal(1);
+    expect(new Date() - time >= timeout1).to.be.true;
+    expect(await target.num).to.be.equal(2);
+    expect(new Date() - time >= timeout2).to.be.true;
+    expect(await target.num).to.be.equal(3);
+    expect(new Date() - time >= timeout3).to.be.true;
   });
 
   it('mockVar forever ', () => {
@@ -533,6 +596,9 @@ describe('MockModule', function () {
     mockFunction.reset();
     expect(() => {
       mockFunction.returned(1);
+    }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
+    expect(() => {
+      mockFunction.delayReturned(1, 500);
     }).throw(Error, 'mockFunction已被reset，请重新调用mockFunction方法!');
     expect(() => {
       mockFunction.mock(() => 100);

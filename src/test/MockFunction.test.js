@@ -1,7 +1,8 @@
 /**
  * Created by liguoxin on 2017/3/1.
- *
+ * @flow
  */
+import type { CallInfo } from 'vx-mock';
 const chai = require('chai');
 const { mockFunction, VerifyOrder } = require('../lib/index');
 const { create } = mockFunction;
@@ -9,7 +10,6 @@ const { expect } = chai;
 
 
 describe('MockFunction', function () {
-
 
   it('test mock function callTimes', () => {
 
@@ -32,6 +32,17 @@ describe('MockFunction', function () {
     expect(targetFunc()).to.be.equal(101);
     expect(targetFunc()).to.be.equal(102);
   });
+  it('test mock function delayReturned', async () => {
+
+    const mockFunction = create();
+
+    const targetFunc = mockFunction.getFunction();
+    mockFunction.delayReturned(101, 50);
+    mockFunction.delayReturned(102, 50);
+    expect(await targetFunc()).to.be.equal(101);
+    expect(await targetFunc()).to.be.equal(102);
+  });
+
   it('test mock function forever', () => {
 
     const mockFunction = create();
@@ -165,7 +176,7 @@ describe('MockFunction', function () {
 
   it('if verifyOrder is notEmpty mockName must had', () => {
     expect(() => {
-      create({ mockName: null, verifyOrder: VerifyOrder.create() });
+      create({ mockName: '', verifyOrder: VerifyOrder.create() });
     }).throw(Error, '开启VerifyOrder，mockName不能为空!');
   });
   it('mock f1 has call addCallFunction', done => {
@@ -176,6 +187,15 @@ describe('MockFunction', function () {
         addCallFunction (mockName) {
           expect(mockName).to.be.equal('a');
           done();
+        },
+        addModuleCallFunction (mockName: string, funcName: string, callInfo: ?CallInfo): void {
+
+        },
+        addModuleVar (mockName: string, attrName: string): void {
+
+        },
+        verify (callback: Function): void {
+
         },
       },
     });

@@ -111,6 +111,14 @@ class MockModuleImpl {
         check();
         returned.push(arg);
       },
+      delayReturned (arg: any, timeout: number): void {
+        check();
+        returned.push(new Promise(resolve => {
+          setTimeout(() => {
+            resolve(arg);
+          }, timeout);
+        }));
+      },
       forever (arg: any): void {
         check();
         foreverValue = arg;
@@ -212,6 +220,13 @@ class MockModuleImpl {
       },
       returned (arg: any): void {
         returned.push(arg);
+      },
+      delayReturned (arg: any, timeout: number): void {
+        returned.push(new Promise(resolve => {
+          setTimeout(() => {
+            resolve(arg);
+          }, timeout);
+        }));
       },
       restore () {
         isMock = false;

@@ -1,6 +1,6 @@
 {
     "name": "vx-mock",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "用于单元测试对象或方法打桩",
     "scripts": {
         "build": "vx-bin build",
@@ -12,7 +12,8 @@
     },
     "devDependencies": {
         "chai": "3.5",
-        "vx-bin": "^0.1.10"
+        "vx-bin": "^0.1.10",
+        "flow-bin": "^0.49.1"
     },
     "dependencies": {
         "deep-equal": "^1.0.1",

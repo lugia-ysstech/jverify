@@ -52,6 +52,10 @@ class MockFunctionImpl {
         return mockFunctionResult.getCallContext(index);
 
       },
+      delayReturned (arg: any, timeout: number): void {
+        mockFunctionResult.delayReturned(arg, timeout);
+
+      },
       restore (): void {
         mockFunctionResult.restore();
       },
