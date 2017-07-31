@@ -157,7 +157,7 @@ declare module 'vx-mock' {
     Any: Symbol,
     Error: Symbol,
     RegExp: Symbol,
-    ObjectUtils: Symbol,
+    Object: Symbol,
     Array: Symbol,
     AsyncFunction: Symbol,
   }

@@ -514,7 +514,7 @@ const exportObj = {
   Date: DateSymbol,
   Any: AnySymbol,
   Error: Errorymbol,
-  ObjectUtils: ObjectSymbol,
+  Object: ObjectSymbol,
   Array: ArraySymbol,
   RegExp: RegexpSymbol,
   AsyncFunction: AsyncFunctionSymbol,

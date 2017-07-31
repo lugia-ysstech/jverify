@@ -1,6 +1,6 @@
 {
     "name": "vx-mock",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "用于单元测试对象或方法打桩",
     "scripts": {
         "build": "vx-bin build",
