@@ -324,18 +324,31 @@ class VerifyOrderImpl {
       let result = {};
       if (isArray(obj)) {
         result = [];
-      }
-      for (const p in obj) {
-        const value = obj[ p ];
-        result[ p ] = value;
-        if (value === undefined) {
-          result[ p ] = 'value is undefined';
-        } else if (isFunction(value)) {
-          result[ p ] = value.toString();
-        } else if (isError(value)) {
-          result[ p ] = { message: value.message };
-        } else if (isObject(value)) {
-          result[ p ] = setProp(value);
+        obj.forEach((value, i) => {
+          result[ i ] = value;
+          if (value === undefined) {
+            result[ i ] = 'value is undefined';
+          } else if (isFunction(value)) {
+            result[ i ] = value.toString();
+          } else if (isError(value)) {
+            result[ i ] = { message: value.message };
+          } else if (isObject(value)) {
+            result[ i ] = setProp(value);
+          }
+        });
+      } else {
+        for (const p in obj) {
+          const value = obj[ p ];
+          result[ p ] = value;
+          if (value === undefined) {
+            result[ p ] = 'value is undefined';
+          } else if (isFunction(value)) {
+            result[ p ] = value.toString();
+          } else if (isError(value)) {
+            result[ p ] = { message: value.message };
+          } else if (isObject(value)) {
+            result[ p ] = setProp(value);
+          }
         }
       }
       return result;
