@@ -724,6 +724,62 @@ describe('VerifyOrder', function () {
     }
     assert.isOk(false, '未正取识别错误顺序');
   });
+
+  it('test callInfo  args is Object it is normal Object', () => {
+    const order = create();
+    const obj = {
+      name: 'ligx',
+      desc: '诸法无我',
+    };
+    order.addModuleCallFunction('a', 'f1', {
+      context: {},
+      args: [ obj ],
+    });
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.f1();
+      });
+    } catch (err) {
+      const objStr = JSON.stringify(obj);
+      expect(err.message.replace(/\\n/g, '\n')).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1(${objStr});   a.f1();  <-- args is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
+  it('test callInfo  args is Object it is normal Object the function props Writable is false', () => {
+    const order = create();
+    const obj: {
+      desc: Function;
+    } = {
+      desc: () => {},
+    };
+    Object.defineProperty(obj, 'desc', {
+      value: () => {},
+      writable: false,
+    });
+
+    order.addModuleCallFunction('a', 'f1', {
+      context: {},
+      args: [ obj ],
+    });
+    try {
+      order.verify(obj => {
+        const { a } = obj;
+        a.f1();
+      });
+    } catch (err) {
+      const objStr = '{"desc":"() => {}"}';
+      expect(err.message.replace(/\\n/g, '\n')).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1(${objStr});   a.f1();  <-- args is error`);
+      return;
+    }
+    assert.isOk(false, '未正取识别错误顺序');
+  });
+
+
   it('test callInfo  args is object  it has function', () => {
     const order = create();
     const f1 = () => { console.info('hellos'); };

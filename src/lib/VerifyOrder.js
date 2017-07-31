@@ -9,17 +9,16 @@ import type {
   OrderStep,
   VarNameObserve,
   VerifyOrder,
-  VerifyOrderFactory,
   VerifyOrderMock,
   VerifyOrderMockList,
   VerifyResult,
-  VerifyResultErrorInfo
-} from "vx-mock";
+  VerifyResultErrorInfo,
+} from 'vx-mock';
 
 const deepEqual = require('deep-equal');
 const { StringUtils, ObjectUtils } = require('vx-var-utils');
 const { pad } = StringUtils;
-const { isFunction, isError, isObject } = ObjectUtils;
+const { isFunction, isError, isObject, isArray } = ObjectUtils;
 const Module_Func = 'module_func';
 const Module_Var = 'module_var';
 const Func = 'func';
@@ -319,20 +318,27 @@ class VerifyOrderImpl {
       max: number = 0;
 
     function setProp (obj) {
+      if (!isObject(obj)) {
+        return obj;
+      }
+      let result = {};
+      if (isArray(obj)) {
+        result = [];
+      }
       for (const p in obj) {
-
         const value = obj[ p ];
+        result[ p ] = value;
         if (value === undefined) {
-          obj[ p ] = 'value is undefined';
+          result[ p ] = 'value is undefined';
         } else if (isFunction(value)) {
-          obj[ p ] = value.toString();
+          result[ p ] = value.toString();
         } else if (isError(value)) {
-          obj[ p ] = { message: value.message };
+          result[ p ] = { message: value.message };
         } else if (isObject(value)) {
-          setProp(value);
+          result[ p ] = setProp(value);
         }
       }
-      return obj;
+      return result;
     }
 
 
