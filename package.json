@@ -1,10 +1,11 @@
 {
     "name": "@lugia/jverify",
-    "version": "1.0.5",
+    "version": "1.0.0",
     "description": "用于单元测试对象或方法打桩",
     "scripts": {
         "build": "lugia-complie build",
-        "dist": "lugia-complie build && lugia-complie publish",
+        "clean": "lugia-complie clean",
+        "dist": "lugia-complie build && npm publish ./target --registry=http://192.168.102.79:5001/",
         "dev": "lugia-complie dev --ig",
         "test-local": "lugia-complie test",
         "lint": "lugia-complie lint",
@@ -12,7 +13,7 @@
         "cov": "lugia-complie cov"
     },
     "devDependencies": {
-        "@lugia/lugia-complie": "^1.0.2"
+        "@lugia/lugia-complie": "^1.0.3"
     },
     "dependencies": {
         "@lugia/type-utils": "^1.0.1",
