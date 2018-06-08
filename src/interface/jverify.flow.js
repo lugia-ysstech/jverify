@@ -3,7 +3,7 @@
  * @flow
  */
 
-declare module 'vx-mock' {
+declare module 'jverify' {
 
   declare interface BaseMockRequire {
     /*

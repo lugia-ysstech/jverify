@@ -2,7 +2,7 @@
  * Created by liguoxin on 2017/2/10.
  * @flow
  */
-import type { MockFunctionFactory, ModuleMockFactory, VerifyOrderFactory, VerifyOrderConfigFactory } from 'vx-mock';
+import type { MockFunctionFactory, ModuleMockFactory, VerifyOrderFactory, VerifyOrderConfigFactory } from 'jverify';
 
 const mockModuleFacotry: ModuleMockFactory = require('./MockModule');
 const functionModuleFacotry: MockFunctionFactory = require('./MockFunction');

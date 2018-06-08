@@ -13,10 +13,10 @@ import type {
   VerifyOrderMockList,
   VerifyResult,
   VerifyResultErrorInfo,
-} from 'vx-mock';
+} from 'jverify';
 
 const deepEqual = require('deep-equal');
-const { StringUtils, ObjectUtils } = require('vx-var-utils');
+const { StringUtils, ObjectUtils } = require('@lugai/type-utils');
 const { pad } = StringUtils;
 const { isFunction, isError, isObject, isArray } = ObjectUtils;
 const Module_Func = 'module_func';

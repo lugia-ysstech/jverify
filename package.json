@@ -1,24 +1,22 @@
 {
-    "name": "vx-mock",
-    "version": "0.1.7",
-    "description": "用于单元测试对象或方法打桩",
-    "scripts": {
-        "build": "vx-bin build",
-        "dist": "vx-bin build && vx-bin publish",
-        "dev": "vx-bin dev --ig",
-        "test-local": "vx-bin test",
-        "test": "vx-bin flow && vx-bin lint && vx-bin test",
-        "cov": "vx-bin cov"
-    },
-    "devDependencies": {
-        "chai": "3.5",
-        "vx-bin": "^0.1.10",
-        "flow-bin": "^0.49.1"
-    },
-    "dependencies": {
-        "deep-equal": "^1.0.1",
-        "vx-var-utils": "^0.5.3"
-    },
-    "author": "yss",
-    "license": "MIT"
+  "name": "@lugai/jverify",
+  "version": "0.1.7",
+  "description": "用于单元测试对象或方法打桩",
+  "scripts": {
+    "build": "lugia-complie build",
+    "dist": "lugia-complie build && lugia-complie publish",
+    "dev": "lugia-complie dev --ig",
+    "test-local": "lugia-complie test",
+    "test": "lugia-complie flow && lugia-complie lint && lugia-complie test",
+    "cov": "lugia-complie cov"
+  },
+  "devDependencies": {
+    "@lugia/lugia-complie": "^1.0.2"
+  },
+  "dependencies": {
+    "deep-equal": "^1.0.1",
+    "@lugia/type-utils": "^1.0.1"
+  },
+  "author": "yss",
+  "license": "MIT"
 }

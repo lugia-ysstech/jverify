@@ -2,7 +2,7 @@
  * Created by liguoxin on 2017/3/1.
  * @flow
  */
-import type { CallInfo } from 'vx-mock';
+import type { CallInfo } from 'jverify';
 const chai = require('chai');
 const { mockFunction, VerifyOrder } = require('../lib/index');
 const { create } = mockFunction;

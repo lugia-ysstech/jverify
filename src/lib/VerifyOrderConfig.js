@@ -6,7 +6,7 @@ import type {
   VerifyOrder,
   VerifyOrderConfig,
   VerifyOrderConfigFactory,
-} from 'vx-mock';
+} from 'jverify';
 
 
 const exportObj: VerifyOrderConfigFactory = {

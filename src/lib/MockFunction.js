@@ -2,7 +2,7 @@
  * Created by liguoxin on 2017/2/10.
  * @flow
  */
-import type { MockFunctionResult, VerifyOrderConfig } from 'vx-mock';
+import type { MockFunctionResult, VerifyOrderConfig } from 'jverify';
 const MockModule = require('./MockModule');
 const { MockFunctionInner } = require('./Const');
 
