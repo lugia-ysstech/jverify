@@ -3,11 +3,11 @@
 #兼容说明
 兼容浏览器IE9以上版本
 #安装
-npm install @lugai/jverify
+npm install @lugia/jverify
 #普通函数打桩
 
 ```
-const { mockFunction } = require('@lugai/jverify');
+const { mockFunction } = require('@lugia/jverify');
 const { create } = mockFunction;
 
 const mock = create();
@@ -97,7 +97,7 @@ console.info('方法调用绑定的this', mockFunction.queryCallContext());
 ```
 ##mock对象的属性
 ```
-const { mockObject } = require('@lugai/jverify');
+const { mockObject } = require('@lugia/jverify');
 const { create } = mockObject;
 const target = {
   name: 'old name',
@@ -144,7 +144,7 @@ mockFunction也支持restore方法用于还原原有处理。
 用于进行mock对象之间顺序，以及方法mock对象的入参、this引用的检查。并给出响应错误信息的提示。
 注意：当第3个步骤出错后，不会再去检查第3步骤后的相关步骤的具体错误。因为，实际开发过程中，也是对错误的不够逐一进行调整。
 ```
-const { VerifyOrder, mockFunction, mockObject } = require('@lugai/jverify');
+const { VerifyOrder, mockFunction, mockObject } = require('@lugia/jverify');
 // mock 的目标对象
 const obj = {
   f1 () {
@@ -217,7 +217,7 @@ try {
 ##reset & resetAll
 mock对象方法的时候，存在一种情况。比如我们需要在nodejs环境下对Promise进行mock操作，可以按如下代码编写：
 ```
-  const { mockObject } = require('@lugai/jverify');
+  const { mockObject } = require('@lugia/jverify');
   const globalMock = mockObject.create(global);
   globalMock.mockFunction('Promise').mock((resolve, reject)=>{
   });  
