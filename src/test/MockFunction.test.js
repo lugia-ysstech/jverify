@@ -2,14 +2,14 @@
  * Created by liguoxin on 2017/3/1.
  * @flow
  */
-import type { CallInfo } from 'jverify';
+
 const chai = require('chai');
 const { mockFunction, VerifyOrder } = require('../lib/index');
 const { create } = mockFunction;
 const { expect } = chai;
 
 
-describe('MockFunction', function () {
+describe('MockFunction', function(): any {
 
   it('test mock function callTimes', () => {
 
@@ -32,7 +32,7 @@ describe('MockFunction', function () {
     expect(targetFunc()).to.be.equal(101);
     expect(targetFunc()).to.be.equal(102);
   });
-  it('test mock function delayReturned', async () => {
+  it('test mock function delayReturned', async (): any => {
 
     const mockFunction = create();
 
@@ -61,7 +61,7 @@ describe('MockFunction', function () {
 
     const targetFunc = mockFunction.getFunction();
 
-    mockFunction.mock(a => {
+    mockFunction.mock((a: number): number => {
       return 2 * a;
     });
 
@@ -75,7 +75,7 @@ describe('MockFunction', function () {
     const targetFunc = mockFunction.getFunction();
     mockFunction.returned(1);
     mockFunction.returned(2);
-    mockFunction.mock(a => {
+    mockFunction.mock((a: number): number => {
       return 2 * a;
     });
 
@@ -101,7 +101,7 @@ describe('MockFunction', function () {
     const targetFunc = mockFunction.getFunction();
     const argOne = [ 1, false ];
     const argTwo = [ 1, 'a' ];
-    const argThree = [ 3, new Date(), {} ];
+    const argThree = [ 3, new Date(), {}];
     targetFunc(...argOne);
     targetFunc(...argTwo);
     targetFunc(...argThree);
@@ -133,7 +133,7 @@ describe('MockFunction', function () {
       name: 'test',
     };
 
-    mockFunction.mock(function () {
+    mockFunction.mock(function(): any {
       return this.name;
     }, obj);
 
@@ -148,7 +148,7 @@ describe('MockFunction', function () {
       name: 'test',
     };
 
-    mockFunction.mock(function () {
+    mockFunction.mock(function(): any {
       return this.name;
     }, obj);
     mockFunction.returned(100);
@@ -162,7 +162,7 @@ describe('MockFunction', function () {
 
     const mockFunction = create();
     const targetFunc = mockFunction.getFunction();
-    mockFunction.mock(() => 1);
+    mockFunction.mock((): number => 1);
     targetFunc();
     targetFunc();
     targetFunc();
@@ -179,22 +179,22 @@ describe('MockFunction', function () {
       create({ mockName: '', verifyOrder: VerifyOrder.create() });
     }).throw(Error, '开启VerifyOrder，mockName不能为空!');
   });
-  it('mock f1 has call addCallFunction', done => {
+  it('mock f1 has call addCallFunction', (done: any) => {
 
 
     const mockObj = create({
       mockName: 'a', verifyOrder: {
-        addCallFunction (mockName) {
+        addCallFunction(mockName: string) {
           expect(mockName).to.be.equal('a');
           done();
         },
-        addModuleCallFunction (mockName: string, funcName: string, callInfo: ?CallInfo): void {
+        addModuleCallFunction(): any {
 
         },
-        addModuleVar (mockName: string, attrName: string): void {
+        addModuleVar(): any {
 
         },
-        verify (callback: Function): void {
+        verify(): any {
 
         },
       },

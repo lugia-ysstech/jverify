@@ -7,7 +7,8 @@
     "dist": "lugia-complie build && lugia-complie publish",
     "dev": "lugia-complie dev --ig",
     "test-local": "lugia-complie test",
-    "test": "lugia-complie flow && lugia-complie lint && lugia-complie test",
+    "lint": "lugia-complie lint",
+    "test": "lugia-complie lint && jest --watch",
     "cov": "lugia-complie cov"
   },
   "devDependencies": {

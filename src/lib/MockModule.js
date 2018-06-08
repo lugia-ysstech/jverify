@@ -12,7 +12,7 @@ class MockModuleImpl {
   restore: Array<Function>;
   reset: Array<Function>;
 
-  constructor (module: Object, orderConfig?: VerifyOrderConfig) {
+  constructor(module: Object, orderConfig?: VerifyOrderConfig) {
     if (!module) {
       throw new Error('mock的目标对象不能为空!');
     }
@@ -33,7 +33,7 @@ class MockModuleImpl {
    * mock模块中的方法
    * @funcName 目标方法名
    */
-  mockFunction (funcName: string): MockModuleFuncReulst {
+  mockFunction(funcName: string): MockModuleFuncReulst {
 
     const orginal = this.target[ funcName ],
       self = this;
@@ -47,7 +47,7 @@ class MockModuleImpl {
       foreverIsOpen = false,
       times = 0;
 
-    this.target[ funcName ] = function (...args) {
+    this.target[ funcName ] = function(...args: any): any {
       callArgs.push(args);
       const ctx = context ? context : this;
 
@@ -75,13 +75,13 @@ class MockModuleImpl {
     };
     let isReset = false;
 
-    function check () {
+    function check() {
       if (isReset) {
         throw new Error('mockFunction已被reset，请重新调用mockFunction方法!');
       }
     }
 
-    function reset () {
+    function reset() {
       check();
       isReset = true;
       self.target[ funcName ] = orginal;
@@ -96,46 +96,46 @@ class MockModuleImpl {
     const mockObj = {
       reset,
       mock,
-      queryCallArgs (): Array<any> {
+      queryCallArgs(): Array<any> {
         check();
         return callArgs;
       },
-      getCallArgs (index: number): any {
+      getCallArgs(index: number): any {
         check();
         if (index >= callArgs.length) {
           return undefined;
         }
         return callArgs[ index ];
       },
-      returned (arg: any): void {
+      returned(arg: any) {
         check();
         returned.push(arg);
       },
-      delayReturned (arg: any, timeout: number): void {
+      delayReturned(arg: any, timeout: number) {
         check();
-        returned.push(new Promise(resolve => {
+        returned.push(new Promise((resolve: Function) => {
           setTimeout(() => {
             resolve(arg);
           }, timeout);
         }));
       },
-      forever (arg: any): void {
+      forever(arg: any) {
         check();
         foreverValue = arg;
         foreverIsOpen = true;
       },
-      queryCallContext (): Array<Object> {
+      queryCallContext(): Array<Object> {
         check();
         return callContext;
       },
-      getCallContext (index: number): any {
+      getCallContext(index: number): any {
         check();
         if (index >= callArgs.length) {
           return undefined;
         }
         return callContext[ index ];
       },
-      restore () {
+      restore() {
         check();
         foreverValue = undefined;
         foreverIsOpen = false;
@@ -147,15 +147,15 @@ class MockModuleImpl {
         times = 0;
         orginalContext = undefined;
       },
-      callTimes (): number {
+      callTimes(): number {
         check();
         return times;
       },
-      mockContext (ctx: Object): void {
+      mockContext(ctx: Object) {
         check();
         orginalContext = ctx;
       },
-      error (err: string | Error): void {
+      error(err: string | Error) {
         check();
         mock(() => {
           if (typeof err === 'string') {
@@ -179,7 +179,7 @@ class MockModuleImpl {
    * mock模块中的变量
    * @varName 目标变量名
    */
-  mockVar (varName: string): MockVarReulst {
+  mockVar(varName: string): MockVarReulst {
     const orginal = this.target[ varName ],
       self = this;
 
@@ -190,7 +190,7 @@ class MockModuleImpl {
       foreverIsOpen = false,
       times = 0;
     Object.defineProperty(this.target, varName, {
-      get () {
+      get(): any {
         if (self.orderConfig) {
           const { mockName, verifyOrder } = self.orderConfig;
           verifyOrder.addModuleVar(mockName, varName);
@@ -208,37 +208,37 @@ class MockModuleImpl {
         return orginal;
       },
     });
-    const mock = func => {
+    const mock = (func: any) => {
       isMock = true;
       mockTarget = func;
     };
     const mockObj = {
       mock,
-      forever (arg: any): void {
+      forever(arg: any) {
         foreverIsOpen = true;
         foreverValue = arg;
       },
-      returned (arg: any): void {
+      returned(arg: any) {
         returned.push(arg);
       },
-      delayReturned (arg: any, timeout: number): void {
-        returned.push(new Promise(resolve => {
+      delayReturned(arg: any, timeout: number) {
+        returned.push(new Promise((resolve: Function) => {
           setTimeout(() => {
             resolve(arg);
           }, timeout);
         }));
       },
-      restore () {
+      restore() {
         isMock = false;
         times = 0;
         foreverValue = undefined;
         foreverIsOpen = false;
         returned = [];
       },
-      callTimes (): number {
+      callTimes(): number {
         return times;
       },
-      error (err: string | Error): void {
+      error(err: string | Error) {
         mock(() => {
           if (typeof err === 'string') {
             throw new Error(err);
@@ -253,15 +253,15 @@ class MockModuleImpl {
     return mockObj;
   }
 
-  restoreAll (): void {
+  restoreAll() {
 
-    this.restore.forEach(restore => {
+    this.restore.forEach((restore: Function) => {
       restore();
     });
   }
 
-  resetAll (): void {
-    this.reset = this.reset.filter(restore => {
+  resetAll() {
+    this.reset = this.reset.filter((restore: Function): boolean => {
       restore();
       return false;
     });
@@ -269,7 +269,7 @@ class MockModuleImpl {
 }
 
 module.exports = {
-  create (module: any, orderConfig?: VerifyOrderConfig): MockModule {
+  create(module: any, orderConfig?: VerifyOrderConfig): MockModule {
     return new MockModuleImpl(module, orderConfig);
   },
 };

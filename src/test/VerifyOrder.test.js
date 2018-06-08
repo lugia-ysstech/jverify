@@ -13,7 +13,7 @@ const {
 const { assert } = chai;
 const { expect } = chai;
 
-describe('VerifyOrder', function () {
+describe('VerifyOrder', function() {
 
 
   /*
@@ -23,7 +23,7 @@ describe('VerifyOrder', function () {
    c 1.cf1(1, 2, 3);
 
    */
-  function mockModuleFunc () {
+  function mockModuleFunc(): any {
     const order = create();
     const A = {},
       B = {},
@@ -60,7 +60,7 @@ describe('VerifyOrder', function () {
    b.b3;
 
    */
-  function mockModuleVar () {
+  function mockModuleVar(): any {
     const order = create();
 
 
@@ -77,7 +77,7 @@ describe('VerifyOrder', function () {
   it('test addModuleCallFunction error  step is same', () => {
     const { A, B, order } = mockModuleFunc();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, b } = obj;
         a.af1(1).withContext(A);
         a.af1(1).withContext(A);
@@ -101,10 +101,10 @@ describe('VerifyOrder', function () {
       A = { a: '1' };
     order.addModuleCallFunction('a', 'f1', {
       context: A,
-      args: [ 1, false, 'hello', [ 1, 2, 3 ], { a: 'a', b: [ 1, 2, 3 ] } ],
+      args: [ 1, false, 'hello', [ 1, 2, 3 ], { a: 'a', b: [ 1, 2, 3 ] }],
     });
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.af1(1).withContext(A);
       });
@@ -121,7 +121,7 @@ describe('VerifyOrder', function () {
   it('test addModuleCallFunction error  expected is more then actuly', () => {
     const { A, B, order } = mockModuleFunc();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, b } = obj;
         a.af1(1).withContext(A);
         a.af1(1).withContext(A);
@@ -148,7 +148,7 @@ describe('VerifyOrder', function () {
   it('test addModuleCallFunction error  func is undefined on 1 number line', () => {
     const { order } = mockModuleFunc();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.dd();
       });
@@ -168,7 +168,7 @@ describe('VerifyOrder', function () {
   it('test addModuleCallFunction error  func is undefined before  error', () => {
     const { order } = mockModuleFunc();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, b } = obj;
         a.af1(1);
         a.af1(1, 4);
@@ -192,7 +192,7 @@ describe('VerifyOrder', function () {
   it('test addModuleCallFunction error  has undefined error before right mock visitr', () => {
     const { order } = mockModuleFunc();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, b } = obj;
         a.af1(1);
         a.af1(1, 4);
@@ -215,7 +215,7 @@ describe('VerifyOrder', function () {
   it('test addModuleCallFunction error  func is undefined on last line', () => {
     const { order } = mockModuleFunc();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, b } = obj;
         a.af1(1);
         a.af1(1, 4);
@@ -237,7 +237,7 @@ describe('VerifyOrder', function () {
   it('test addModuleCallFunction error  func is undefined on 3 number line', () => {
     const { order } = mockModuleFunc();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, ddd } = obj;
         a.af1(1);
         a.af1(1, 4);
@@ -296,7 +296,7 @@ describe('VerifyOrder', function () {
   it('test addModuleVar error has undefined error before right mock visit', () => {
     const { order } = mockModuleVar();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, b } = obj;
         a.a1;
         a.a2;
@@ -320,7 +320,7 @@ describe('VerifyOrder', function () {
   it('test addModuleVar error  expected is less then actuly line 1 is error', () => {
     const { order } = mockModuleVar();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.a2;
       });
@@ -340,7 +340,7 @@ describe('VerifyOrder', function () {
   it('test addModuleVar error  modulename error', () => {
     const { order } = mockModuleVar();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { b } = obj;
         b.a1;
       });
@@ -360,7 +360,7 @@ describe('VerifyOrder', function () {
   it('test addModuleVar b is undefined', () => {
     const { order } = mockModuleVar();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { b } = obj;
         b.a21;
       });
@@ -381,7 +381,7 @@ describe('VerifyOrder', function () {
   it('test addModuleVar a.f3 is undefined', () => {
     const { order } = mockModuleVar();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.a1;
         a.a2;
@@ -404,7 +404,7 @@ describe('VerifyOrder', function () {
   it('test addModuleVar error  expected is less then actuly line 1  is right', () => {
     const { order } = mockModuleVar();
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.a1;
         a.a1;
@@ -423,7 +423,7 @@ describe('VerifyOrder', function () {
     assert.isOk(false, '未正取识别错误顺序');
   });
 
-  function mockFunction () {
+  function mockFunction(): Object {
     const order = create(),
       A = {},
       B = {},
@@ -431,7 +431,7 @@ describe('VerifyOrder', function () {
 
     order.addCallFunction('a', { context: A, args: [ 1, 2 ] });
     order.addCallFunction('a', { context: A, args: [ 'hello', false ] });
-    order.addCallFunction('b', { context: B, args: [ [ 1, 2, 3 ], { a: '1', b: [ 4, 5, 6 ] } ] });
+    order.addCallFunction('b', { context: B, args: [[ 1, 2, 3 ], { a: '1', b: [ 4, 5, 6 ] }] });
     order.addCallFunction('c', { context: C, args: [ 6, 7 ] });
     order.addCallFunction('b', { context: B, args: [ 'hello' ] });
     return { order, A, B, C };
@@ -440,7 +440,7 @@ describe('VerifyOrder', function () {
 
   it('test addCallFunction call sucess', () => {
     const { order } = mockFunction();
-    order.verify(obj => {
+    order.verify((obj: Object): any => {
       const { a, b, c } = obj;
       a(1, 2);
       a('hello', false);
@@ -452,7 +452,7 @@ describe('VerifyOrder', function () {
 
   it('test addCallFunction call sucess with Context', () => {
     const { order, A, B, C } = mockFunction();
-    order.verify(obj => {
+    order.verify((obj: Object): any => {
       const { a, b, c } = obj;
       a(1, 2).withContext(A);
       a('hello', false).withContext(A);
@@ -466,7 +466,7 @@ describe('VerifyOrder', function () {
     const { order } = mockFunction();
     try {
 
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a(1, 2, 3);
         a(1, 2, 3);
@@ -488,7 +488,7 @@ describe('VerifyOrder', function () {
     const { order } = mockFunction();
     try {
 
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a(1, 2, 3);
         a(1, 2, 3);
@@ -514,7 +514,7 @@ describe('VerifyOrder', function () {
     const { order } = mockFunction();
     try {
 
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, b, c } = obj;
         a(1, 3);
         a('hello', false);
@@ -538,7 +538,7 @@ describe('VerifyOrder', function () {
     const { order } = mockFunction();
     try {
 
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, b, c } = obj;
         a(1, 2);
         a('a', false);
@@ -562,7 +562,7 @@ describe('VerifyOrder', function () {
     const { order } = mockFunction();
     try {
 
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a, b, c } = obj;
         a('a');
         a('a', false);
@@ -598,7 +598,7 @@ describe('VerifyOrder', function () {
     order.addModuleCallFunction('obj2', 'f2', { args: [ 1, true, 'king' ], context: ctxC });
 
 
-    order.verify(obj => {
+    order.verify((obj: Object): any => {
       const { f1, f2, obj1, obj2 } = obj;
       f1(1);
       f2('hello');
@@ -608,7 +608,7 @@ describe('VerifyOrder', function () {
       obj2.f2(1, true, 'king');
     });
 
-    order.verify(obj => {
+    order.verify((obj: Object): any => {
       const { f1, f2, obj1, obj2 } = obj;
       f1(1);
       f2('hello');
@@ -620,7 +620,7 @@ describe('VerifyOrder', function () {
 
     try {
 
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { f1, f2, obj1, obj2 } = obj;
         f1(2);
         f2('hello');
@@ -648,7 +648,7 @@ describe('VerifyOrder', function () {
     const order = create();
     order.addModuleCallFunction('a', 'f1');
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.f1();
         a.f2();
@@ -668,7 +668,7 @@ describe('VerifyOrder', function () {
     order.addModuleCallFunction('a', 'f1');
     order.addModuleCallFunction('a', 'f1');
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.f1();
         a.f2();
@@ -688,10 +688,10 @@ describe('VerifyOrder', function () {
     const order = create();
     order.addModuleCallFunction('a', 'f1', {
       context: {},
-      args: [ { a: undefined } ],
+      args: [{ a: undefined }],
     });
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.f1();
       });
@@ -712,7 +712,7 @@ describe('VerifyOrder', function () {
       args: [ f1 ],
     });
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.f1();
       });
@@ -736,7 +736,7 @@ describe('VerifyOrder', function () {
       args: [ obj ],
     });
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.f1();
       });
@@ -752,7 +752,7 @@ describe('VerifyOrder', function () {
   it('test callInfo  args is Object it is normal Object the function props Writable is false', () => {
     const order = create();
     const obj: {
-      desc: Function;
+      desc: Function
     } = {
       desc: () => {},
     };
@@ -766,7 +766,7 @@ describe('VerifyOrder', function () {
       args: [ obj ],
     });
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.f1();
       });
@@ -788,13 +788,13 @@ describe('VerifyOrder', function () {
     };
     order.addModuleCallFunction('a', 'f1', {
       context: {},
-      args: [ {
+      args: [{
         f1,
         f2,
-      } ],
+      }],
     });
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.f1();
       });
@@ -818,7 +818,7 @@ describe('VerifyOrder', function () {
       args: [ error ],
     });
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.f1();
       });
@@ -837,10 +837,10 @@ describe('VerifyOrder', function () {
     const error = new Error('hello');
     order.addModuleCallFunction('a', 'f1', {
       context: {},
-      args: [ { err: error } ],
+      args: [{ err: error }],
     });
     try {
-      order.verify(obj => {
+      order.verify((obj: Object): any => {
         const { a } = obj;
         a.f1();
       });
@@ -859,7 +859,7 @@ describe('VerifyOrder', function () {
     order.addModuleCallFunction('a', 'f1', {
       context: hello,
     });
-    order.verify(mock => {
+    order.verify((mock: Object) => {
       const { a } = mock;
       a.f1();
     });
@@ -890,7 +890,7 @@ describe('VerifyOrder', function () {
     order.addModuleCallFunction('a', 'f1', {
       args: [ 1, 2 ],
     });
-    order.verify(({ a }) => {
+    order.verify(({ a }: any) => {
       a.f1(Any, Any);
     });
   });
@@ -908,7 +908,7 @@ describe('VerifyOrder', function () {
 
     };
 
-    const asyncFunc = async () => {
+    const asyncFunc = async (): any => {
 
     };
     const array = [ 'ligx' ];

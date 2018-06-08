@@ -10,7 +10,7 @@ class MockFunctionImpl {
   target: Function;
   orderConfig: ?VerifyOrderConfig;
 
-  constructor (orderConfig?: VerifyOrderConfig) {
+  constructor(orderConfig?: VerifyOrderConfig) {
     this.target = () => {};
     if (orderConfig) {
       const { verifyOrder, mockName } = orderConfig;
@@ -21,7 +21,7 @@ class MockFunctionImpl {
     }
   }
 
-  createMockResult (): MockFunctionResult {
+  createMockResult(): MockFunctionResult {
     const funcName = MockFunctionInner;
     const target = {
       [funcName]: this.target,
@@ -30,46 +30,45 @@ class MockFunctionImpl {
     const mockFunctionResult = mockModule.mockFunction(funcName);
 
     return {
-      getFunction () {
+      getFunction(): any {
         return target[ funcName ];
       },
-      mock (func: Function, ctx?: Object): void {
+      mock(func: Function, ctx?: Object) {
         mockFunctionResult.mock(func, ctx);
       },
 
-      queryCallArgs (): Array<any> {
+      queryCallArgs(): Array<any> {
         return mockFunctionResult.queryCallArgs();
       },
-      getCallArgs (index: number): Array<any> {
+      getCallArgs(index: number): Array<any> {
         return mockFunctionResult.getCallArgs(index);
 
       },
-      queryCallContext (): Array<Object> {
+      queryCallContext(): Array<Object> {
         return mockFunctionResult.queryCallContext();
 
       },
-      getCallContext (index: number): any {
+      getCallContext(index: number): any {
         return mockFunctionResult.getCallContext(index);
 
       },
-      delayReturned (arg: any, timeout: number): void {
+      delayReturned(arg: any, timeout: number) {
         mockFunctionResult.delayReturned(arg, timeout);
-
       },
-      restore (): void {
+      restore() {
         mockFunctionResult.restore();
       },
-      callTimes (): number {
+      callTimes(): number {
         return mockFunctionResult.callTimes();
       },
 
-      returned (arg: any): void {
+      returned(arg: any) {
         mockFunctionResult.returned(arg);
       },
-      forever (arg: any): void {
+      forever(arg: any) {
         mockFunctionResult.forever(arg);
       },
-      error (err: string | Error): void {
+      error(err: string | Error) {
         mockFunctionResult.error(err);
       },
     };
@@ -78,7 +77,7 @@ class MockFunctionImpl {
 }
 
 module.exports = {
-  create (orderConfig?: VerifyOrderConfig): MockFunctionResult {
+  create(orderConfig?: VerifyOrderConfig): MockFunctionResult {
     return new MockFunctionImpl(orderConfig).createMockResult();
   },
 };

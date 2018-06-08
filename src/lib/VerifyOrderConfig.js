@@ -10,8 +10,8 @@ import type {
 
 
 const exportObj: VerifyOrderConfigFactory = {
-  create (mockName: string,
-           verifyOrder: VerifyOrder): VerifyOrderConfig {
+  create(mockName: string,
+    verifyOrder: VerifyOrder): VerifyOrderConfig {
     return {
       mockName,
       verifyOrder,

@@ -7,7 +7,7 @@ const { create } = require('../lib/VerifyOrderConfig');
 const { VerifyOrderConfig, VerifyOrder } = require('../lib');
 const { expect } = chai;
 
-describe('VerifyOrderConfig', function () {
+describe('VerifyOrderConfig', function() {
   beforeEach(() => {
     this.order = VerifyOrder.create();
   });

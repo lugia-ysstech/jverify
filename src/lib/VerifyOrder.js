@@ -43,7 +43,7 @@ class VerifyOrderImpl {
   moduleVar: ModuleVarStatus;
   varNameObserve: VarNameObserve;
 
-  constructor () {
+  constructor(): VerifyOrderImpl {
     this.steps = [];
     this.mockNames = {};
     this.moduleVar = {};
@@ -52,7 +52,7 @@ class VerifyOrderImpl {
   }
 
 
-  addModuleCallFunction (mockName: string, funcName: string, callInfo: ?CallInfo): void {
+  addModuleCallFunction(mockName: string, funcName: string, callInfo: ?CallInfo) {
 
     this.checkMockNameOnAdd(mockName);
 
@@ -70,7 +70,7 @@ class VerifyOrderImpl {
     });
   }
 
-  checkCallInfo (callInfo: ?CallInfo): CallInfo {
+  checkCallInfo(callInfo: ?CallInfo): CallInfo {
     const result = callInfo ? callInfo : { args: [] };
     if (!result.args) {
       result.args = [];
@@ -79,7 +79,7 @@ class VerifyOrderImpl {
   }
 
 
-  addModuleVar (mockName: string, attrName: string): void {
+  addModuleVar(mockName: string, attrName: string) {
     this.checkMockNameOnAdd(mockName);
 
     this.mockNames[ mockName ].push({
@@ -95,7 +95,7 @@ class VerifyOrderImpl {
     });
   }
 
-  addCallFunction (mockName: string, callInfo: ?CallInfo): void {
+  addCallFunction(mockName: string, callInfo: ?CallInfo) {
     this.checkMockNameOnAdd(mockName);
 
     this.mockNames[ mockName ].push({
@@ -111,14 +111,14 @@ class VerifyOrderImpl {
     });
   }
 
-  checkMockNameOnAdd (mockName: string) {
+  checkMockNameOnAdd(mockName: string) {
 
     if (this.mockNames[ mockName ] === undefined) {
       this.mockNames[ mockName ] = [];
     }
   }
 
-  getMock () {
+  getMock(): any {
     this.moduleVar = {};
 
     const result = {},
@@ -127,12 +127,12 @@ class VerifyOrderImpl {
 
     let index = 0;
 
-    Object.keys(this.mockNames).forEach(expectMockName => {
+    Object.keys(this.mockNames).forEach((expectMockName: string) => {
       const mockInfoList: Array<VerifyOrderMock> = this.mockNames[ expectMockName ],
         self = this;
       let value = {};
 
-      mockInfoList.forEach(mockInfo => {
+      mockInfoList.forEach((mockInfo: Object) => {
 
         const { name: expectName, type } = mockInfo;
         if (!expectName) {
@@ -140,7 +140,7 @@ class VerifyOrderImpl {
         }
 
         if (type === Module_Func) {
-          value[ expectName ] = (...callArgs) => {
+          value[ expectName ] = (...callArgs: any): any => {
             const step = this.steps[ index ];
             realyOrder.push({
               mockName: expectMockName,
@@ -155,7 +155,7 @@ class VerifyOrderImpl {
               verifyResult.error[ index ] = this.generateError({ stepError: true });
               index++;
               return {
-                withContext () {
+                withContext() {
 
                 },
               };
@@ -193,7 +193,7 @@ class VerifyOrderImpl {
 
 
             Object.defineProperty(value, expectName, {
-              get () {
+              get(): boolean {
 
                 const step = self.steps[ index ];
                 realyOrder.push({
@@ -225,7 +225,7 @@ class VerifyOrderImpl {
 
         if (type === Func) {
 
-          value = (...callArgs) => {
+          value = (...callArgs: any): any => {
 
             const step = this.steps[ index ];
             realyOrder.push({
@@ -241,7 +241,7 @@ class VerifyOrderImpl {
               verifyResult.error[ index ] = this.generateError({ stepError: true });
               index++;
               return {
-                withContext () {
+                withContext() {
 
                 },
               };
@@ -273,7 +273,7 @@ class VerifyOrderImpl {
           result[ expectMockName ] = value;
         } else {
           result[ expectMockName ] = new Proxy(value, {
-            get (target, props) {
+            get(target: Object, props: string): any {
               if (!target.hasOwnProperty(props)) {
                 throw new Error(`${expectMockName}.${props} is undefined`);
               }
@@ -282,7 +282,7 @@ class VerifyOrderImpl {
           });
         }
       });
-      result.__verify__ = err => {
+      result.__verify__ = (err: Object) => {
         if (err) {
           verifyResult.error[ realyOrder.length ] = [ err.message ];
           throw Error('验证失败，左边为实际调用顺序，右边为期望调用顺序\n' + this.generateMsg(realyOrder, this.steps, verifyResult.error));
@@ -298,7 +298,7 @@ class VerifyOrderImpl {
 
   }
 
-  verify (callback: Function): void {
+  verify(callback: Function) {
     const mock = this.getMock();
     try {
       callback(mock);
@@ -313,18 +313,18 @@ class VerifyOrderImpl {
     mock.__verify__ && mock.__verify__();
   }
 
-  generateMsg (expectStep: Array<OrderStep>, actulyStep: Array<OrderStep>, error: VerifyResultErrorInfo): string {
+  generateMsg(expectStep: Array<OrderStep>, actulyStep: Array<OrderStep>, error: VerifyResultErrorInfo): string {
     let result: Array<string> = [],
       max: number = 0;
 
-    function setProp (obj) {
+    function setProp(obj: any): any {
       if (!isObject(obj)) {
         return obj;
       }
       let result = {};
       if (isArray(obj)) {
         result = [];
-        obj.forEach((value, i) => {
+        obj.forEach((value: any, i: number) => {
           result[ i ] = value;
           if (value === undefined) {
             result[ i ] = 'value is undefined';
@@ -355,12 +355,12 @@ class VerifyOrderImpl {
     }
 
 
-    function parseCallInfo (callInfo: CallInfo): string {
+    function parseCallInfo(callInfo: CallInfo): string {
       if (!callInfo) {
         return '';
       }
       const rs: Array<string> = [];
-      callInfo.args && callInfo.args.forEach(arg => {
+      callInfo.args && callInfo.args.forEach((arg: Object) => {
         if (isFunction(arg)) {
           rs.push(arg.toString());
         } else {
@@ -374,7 +374,7 @@ class VerifyOrderImpl {
       return rs.join(', ');
     }
 
-    function generateOneCall (stepObj: OrderStep): string {
+    function generateOneCall(stepObj: OrderStep): string {
       const { name, mockName, callInfo, type } = stepObj;
       switch (type) {
         case Module_Func:
@@ -409,7 +409,7 @@ class VerifyOrderImpl {
         }
       }
     }
-    result = result.map((item: string) => {
+    result = result.map((item: string): string => {
       return pad({ str: item, len: max });
     });
 
@@ -431,10 +431,10 @@ class VerifyOrderImpl {
   }
 
 
-  isArgsEql (args?: Array<any> = [], callArgs?: Array<any> = []) {
+  isArgsEql(args?: Array<any> = [], callArgs?: Array<any> = []): boolean {
     const cloneArgs = [];
     Array.prototype.push.apply(cloneArgs, args);
-    callArgs && callArgs.forEach((item, index) => {
+    callArgs && callArgs.forEach((item: Symbol, index: number) => {
       let isEqual = false;
       switch (item) {
         case NumberSymbol:
@@ -477,10 +477,10 @@ class VerifyOrderImpl {
     return deepEqual(cloneArgs, callArgs);
   }
 
-  withContext (callInfo ?: CallInfo, verifyResult: VerifyResult, index: number, self: VerifyOrderImpl) {
+  withContext(callInfo ?: CallInfo, verifyResult: VerifyResult, index: number, self: VerifyOrderImpl): Function {
     if (callInfo) {
       const { context } = callInfo;
-      return function (ctx: any) {
+      return function(ctx: any) {
         const ctxIsEql: boolean = ctx === context;
         if (ctxIsEql === false) {
           verifyResult.sucess = false;
@@ -498,7 +498,7 @@ class VerifyOrderImpl {
     return () => {};
   }
 
-  generateError ({ ctxIsEql = true, mockNameIsEql = true, nameIsEql = true, argIsEql = true, stepError = false }: GenerateErrorFuncArg): Array<string> {
+  generateError({ ctxIsEql = true, mockNameIsEql = true, nameIsEql = true, argIsEql = true, stepError = false }: GenerateErrorFuncArg): Array<string> {
     const result: Array<string> = [];
     if (mockNameIsEql === false) {
       result.push('module');
@@ -520,10 +520,10 @@ class VerifyOrderImpl {
 }
 
 const exportObj = {
-  create (): VerifyOrder {
+  create(): VerifyOrder {
     return new VerifyOrderImpl();
   },
-  createOrgial (): VerifyOrderImpl {
+  createOrgial(): VerifyOrderImpl {
     return new VerifyOrderImpl();
   },
   Function: FunctionSymbol,
