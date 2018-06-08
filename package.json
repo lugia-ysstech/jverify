@@ -15,9 +15,38 @@
     "@lugia/lugia-complie": "^1.0.2"
   },
   "dependencies": {
-    "deep-equal": "^1.0.1",
-    "@lugia/type-utils": "^1.0.1"
+    "@lugia/type-utils": "^1.0.1",
+    "chai": "^4.1.2",
+    "deep-equal": "^1.0.1"
   },
   "author": "yss",
-  "license": "MIT"
+  "license": "MIT",
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,mjs}"
+    ],
+    "testMatch": [
+      "<rootDir>/target/test/**/*.{js,jsx,mjs}"
+    ],
+    "testEnvironment": "node",
+    "testURL": "http://localhost",
+    "transform": {
+      "^.+\\.(js|jsx|mjs)$": "<rootDir>/node_modules/babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$"
+    ],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node",
+      "mjs"
+    ]
+  }
 }

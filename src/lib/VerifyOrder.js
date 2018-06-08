@@ -16,7 +16,7 @@ import type {
 } from 'jverify';
 
 const deepEqual = require('deep-equal');
-const { StringUtils, ObjectUtils } = require('@lugai/type-utils');
+const { StringUtils, ObjectUtils } = require('@lugia/type-utils');
 const { pad } = StringUtils;
 const { isFunction, isError, isObject, isArray } = ObjectUtils;
 const Module_Func = 'module_func';
