@@ -13,7 +13,7 @@
         "cov": "lugia-complie cov"
     },
     "devDependencies": {
-        "@lugia/lugia-complie": "^1.0.3"
+        "@lugia/lugia-complie": "^1.0.0"
     },
     "dependencies": {
         "@lugia/type-utils": "^1.0.1",

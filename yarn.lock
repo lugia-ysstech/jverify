@@ -92,9 +92,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@lugia/lugia-complie@^1.0.3":
+"@lugia/lugia-complie@^1.0.0":
   version "1.0.3"
-  resolved "http://192.168.102.79:5001/@lugia/lugia-complie/download/@lugia/lugia-complie-1.0.3.tgz#2064942bd2d43be2f2b9faa7c26a5e685ad4e869"
+  resolved "http://192.168.102.79:5001/@lugia/lugia-complie/download/@lugia/lugia-complie-1.0.3.tgz#fc9ed89a92881078b3f3576b98d1fdd2549d0ea2"
   dependencies:
     babel-core "^6.26.0"
     babel-eslint "^8.2.2"
