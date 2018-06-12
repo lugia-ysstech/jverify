@@ -3,7 +3,7 @@
  * @flow
  */
 
-declare module 'jverify' {
+declare module '@lugia/jverify' {
 
   declare interface BaseMockRequire {
     /*
