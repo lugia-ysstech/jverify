@@ -10,11 +10,11 @@
         "cov": "lugia-complie cov"
     },
     "devDependencies": {
-        "@lugia/lugia-complie": "^1.0.3"
+        "@lugia/lugia-complie": "^1.0.3",
+        "chai": "^4.1.2"
     },
     "dependencies": {
         "@lugia/type-utils": "^1.0.0",
-        "chai": "^4.1.2",
         "deep-equal": "^1.0.1"
     },
     "author": "yss",
