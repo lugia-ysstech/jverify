@@ -3,20 +3,17 @@
     "version": "1.0.0",
     "description": "用于单元测试对象或方法打桩",
     "scripts": {
-        "build": "lugia-complie build",
         "clean": "lugia-complie clean",
-        "dist": "lugia-complie build && npm publish ./target --registry=http://192.168.102.79:5001/",
-        "dev": "lugia-complie dev --ig",
-        "test-local": "lugia-complie test",
-        "lint": "lugia-complie lint",
-        "test": "lugia-complie lint && jest --watch",
+        "build": "lugia-complie lint && lugia-complie build",
+        "dist": " npm run build && npm publish ./target --registry=http://192.168.102.79:5001/",
+        "test": "lugia-complie lint -w & lugia-complie dev --watchAll & lugia-complie test --watchAll",
         "cov": "lugia-complie cov"
     },
     "devDependencies": {
-        "@lugia/lugia-complie": "^1.0.0"
+        "@lugia/lugia-complie": "^1.0.3"
     },
     "dependencies": {
-        "@lugia/type-utils": "^1.0.1",
+        "@lugia/type-utils": "^1.0.0",
         "chai": "^4.1.2",
         "deep-equal": "^1.0.1"
     },
