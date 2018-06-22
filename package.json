@@ -1,6 +1,6 @@
 {
     "name": "@lugia/jverify",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "用于单元测试对象或方法打桩",
     "scripts": {
         "clean": "lugia-complie clean",
@@ -14,7 +14,7 @@
         "chai": "^4.1.2"
     },
     "dependencies": {
-        "@lugia/type-utils": "^1.0.0",
+        "@lugia/type-utils": "^1.0.1",
         "deep-equal": "^1.0.1"
     },
     "author": "yss",
