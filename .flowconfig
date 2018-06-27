@@ -6,7 +6,7 @@
 [libs]
 flow-typed/
 ./src/interface/
-node_modules/vx-var-utils/interface/
+node_modules/@lugia/type-utils/interface/
 [options]
 
 esproposal.class_static_fields=enable
