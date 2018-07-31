@@ -317,7 +317,11 @@ class VerifyOrderImpl {
     let result: Array<string> = [],
       max: number = 0;
 
-    function setProp(obj: any): any {
+    function setProp(obj: any, level: number): any {
+      if(level > 5){
+        console.warn('param contain circle struct !');
+        return {};
+      }
       if (!isObject(obj)) {
         return obj;
       }
@@ -333,7 +337,7 @@ class VerifyOrderImpl {
           } else if (isError(value)) {
             result[ i ] = { message: value.message };
           } else if (isObject(value)) {
-            result[ i ] = setProp(value);
+            result[ i ] = setProp(value, level + 1);
           }
         });
       } else {
@@ -347,7 +351,7 @@ class VerifyOrderImpl {
           } else if (isError(value)) {
             result[ p ] = { message: value.message };
           } else if (isObject(value)) {
-            result[ p ] = setProp(value);
+            result[ p ] = setProp(value, level + 1);
           }
         }
       }
@@ -367,7 +371,7 @@ class VerifyOrderImpl {
           if (isError(arg)) {
             rs.push(`{"message":"${arg.message}"`);
           } else {
-            rs.push(JSON.stringify(setProp(arg)));
+            rs.push(JSON.stringify(setProp(arg, 0)));
           }
         }
       });
