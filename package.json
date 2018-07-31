@@ -6,7 +6,8 @@
         "clean": "lugia-complie clean",
         "build": "lugia-complie lint && lugia-complie build",
         "dist": " npm run build && npm publish ./target --registry=http://192.168.102.79:5001/",
-        "test": "lugia-complie lint -w & lugia-complie dev --watchAll & lugia-complie test --watchAll",
+        "dev": "lugia-complie dev --ig",
+        "test": "lugia-complie test --watchAll",
         "cov": "lugia-complie cov"
     },
     "devDependencies": {
