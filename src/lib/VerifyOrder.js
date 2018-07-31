@@ -15,6 +15,7 @@ import type {
   VerifyResultErrorInfo,
 } from 'jverify';
 
+const clone = require('clone');
 const deepEqual = require('deep-equal');
 const { StringUtils, ObjectUtils } = require('@lugia/type-utils');
 const { pad } = StringUtils;
@@ -558,6 +559,54 @@ const exportObj = {
   },
   createOrgial (): VerifyOrderImpl {
     return new VerifyOrderImpl();
+  },
+  parseObject (data: Object) {
+
+    const isArray = ObjectUtils.isArray(data);
+    const isObject = ObjectUtils.isObject(data);
+    let realyData = '数据类型错误';
+    if (isArray || isObject) {
+      realyData = clone(data, true);
+
+      function check (pathStr: any) {
+        if (!ObjectUtils.isString(pathStr)) {
+          throw  new Error('path参数错误');
+        }
+      }
+
+      return {
+        getValue (pathStr: string) {
+          check(pathStr);
+          const pathArray = pathStr.split('.');
+          let result = data;
+          pathArray.forEach((path: string) => {
+            result = result[ path ]
+          });
+          return result;
+        },
+
+        setValue (pathStr: string, val: any) {
+          check(pathStr);
+          const pathArray = pathStr.split('.');
+          let result = realyData;
+          const last = pathArray.pop();
+          pathArray.forEach((path: string) => {
+            result = result[ path ]
+          });
+          result[ last ] = val;
+        },
+
+        fetch () {
+          return realyData;
+        },
+      }
+    } else {
+      return {
+        fetch () {
+          return realyData;
+        },
+      }
+    }
   },
   Function: FunctionSymbol,
   String: StringSymbol,
