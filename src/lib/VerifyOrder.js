@@ -437,11 +437,10 @@ class VerifyOrderImpl {
 
 
   isArgsEql (actualArgs?: Array<any> = [], expectCallArgs?: Array<any> = []): boolean {
-    const cloneArgs = [];
     if (actualArgs.length !== expectCallArgs.length) {
       return false;
     }
-    Array.prototype.push.apply(cloneArgs, actualArgs);
+    const { fetch, setValue } = exportObj.parseObject(actualArgs);
     let matchType = function (item, arg) {
       let isEqual = false;
       switch (item) {
@@ -482,33 +481,52 @@ class VerifyOrderImpl {
       }
       return isEqual;
     };
-    expectCallArgs && expectCallArgs.forEach((expectItem: any, index: number) => {
-      const actualItem = actualArgs[ index ];
+    const { getValue } = exportObj.parseObject(expectCallArgs);
 
-      if (ObjectUtils.isArray(expectItem) && ObjectUtils.isArray(actualItem)) {
+    let match = function (path, actualItem) {
+      const pathStr = path.join('.');
+      let expectItem;
+      try {
+        expectItem = getValue(pathStr);
+      } catch (e) {
 
-        const itemArray = [];
-        Array.prototype.push.apply(itemArray, actualItem);
-        cloneArgs[ index ] = itemArray;
-
-        expectItem.forEach((item, i) => {
-          const actualAttrValue = actualItem[ i ];
-          matchType(item, actualAttrValue) && (itemArray[ i ] = item);
-        });
-
-      } else if (ObjectUtils.isObject(expectItem) && ObjectUtils.isObject(actualItem)) {
-        let cloneActualArg = Object.assign({}, actualItem);
-        cloneArgs[ index ] = cloneActualArg;
-        Object.keys(expectItem).forEach(key => {
-          const expectAttrValue = expectItem[ key ];
-          const actualAttrValue = actualArgs[ key ];
-          matchType(expectAttrValue, actualAttrValue) && (cloneActualArg[ key ] = expectAttrValue);
-        });
-      } else {
-        matchType(expectItem, actualItem) && (cloneArgs[ index ] = expectItem);
       }
+
+      matchType(expectItem, actualItem) && setValue(pathStr, expectItem);
+      return !!expectItem;
+    };
+
+    function process (actualItem, path) {
+      if(path.length > 5){
+        return false;
+      }
+      if (ObjectUtils.isArray(actualItem)) {
+        let bool = false;
+        actualItem.forEach((item, index) => {
+          const result = process(item, [ ...path, index + '' ]);
+          bool = bool || result;
+        });
+        if (bool === false) {
+          return match(path, actualItem);
+        }
+      } else if (ObjectUtils.isObject(actualItem)) {
+        let bool = false;
+        Object.keys(actualItem).forEach(key => {
+          let result = process(actualItem[ key ], [ ...path, key ]);
+          bool = bool || result;
+        });
+        if (bool === false) {
+          return match(path, actualItem);
+        }
+      } else {
+        return match(path, actualItem);
+      }
+    }
+
+    actualArgs.forEach((actualItem, index) => {
+      process(actualItem, [ index + '' ]);
     });
-    return deepEqual(cloneArgs, expectCallArgs);
+    return deepEqual(fetch(), expectCallArgs);
   }
 
   withContext (callInfo ?: CallInfo, verifyResult: VerifyResult, index: number, self: VerifyOrderImpl): Function {
