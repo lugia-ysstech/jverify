@@ -86,7 +86,7 @@ describe('VerifyOrder', function () {
       });
 
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);           a.af1(1);
 2.  a.af1(1, 4);        a.af1(1);  <-- args is error
@@ -110,7 +110,7 @@ describe('VerifyOrder', function () {
       });
 
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.f1(1, false, "hello", [1,2,3], {"a":"a","b":[1,2,3]});  <-- a.af1 is undefined & step is error`);
       return;
@@ -132,7 +132,7 @@ describe('VerifyOrder', function () {
       });
 
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);           a.af1(1);
 2.  a.af1(1, 4);        a.af1(1);  <-- args is error
@@ -154,7 +154,7 @@ describe('VerifyOrder', function () {
       });
 
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);          <-- a.dd is undefined & step is error
 2.  a.af1(1, 4);       <-- step is error
@@ -178,7 +178,7 @@ describe('VerifyOrder', function () {
       });
 
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);           a.af1(1);
 2.  a.af1(1, 4);        a.af1(1, 4);
@@ -201,7 +201,7 @@ describe('VerifyOrder', function () {
       });
 
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);           a.af1(1);
 2.  a.af1(1, 4);        a.af1(1, 4);
@@ -224,7 +224,7 @@ describe('VerifyOrder', function () {
       });
 
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);           a.af1(1);
 2.  a.af1(1, 4);        a.af1(1, 4);
@@ -246,7 +246,7 @@ describe('VerifyOrder', function () {
       });
 
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);           a.af1(1);
 2.  a.af1(1, 4);        a.af1(1, 4);
@@ -263,7 +263,7 @@ describe('VerifyOrder', function () {
       });
 
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.af1(1);          <-- step is error
 2.  a.af1(1, 4);       <-- step is error
@@ -281,7 +281,7 @@ describe('VerifyOrder', function () {
       order.verify(() => {
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.a1;   <-- step is error
 2.  a.a2;   <-- step is error
@@ -304,7 +304,7 @@ describe('VerifyOrder', function () {
         b.a2;
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.a1;    a.a1;
 2.  a.a2;    a.a2;
@@ -325,7 +325,7 @@ describe('VerifyOrder', function () {
         a.a2;
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.a1;    a.a2;  <-- name is error
 2.  a.a2;   <-- step is error
@@ -345,7 +345,7 @@ describe('VerifyOrder', function () {
         b.a1;
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.a1;    b.a1;  <-- module is error
 2.  a.a2;   <-- step is error
@@ -365,7 +365,7 @@ describe('VerifyOrder', function () {
         b.a21;
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.a1;   <-- b.a21 is undefined & step is error
 2.  a.a2;   <-- step is error
@@ -388,7 +388,7 @@ describe('VerifyOrder', function () {
         a.a3;
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.a1;    a.a1;
 2.  a.a2;    a.a2;
@@ -410,7 +410,7 @@ describe('VerifyOrder', function () {
         a.a1;
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.a1;    a.a1;
 2.  a.a2;    a.a1;  <-- name is error
@@ -472,7 +472,7 @@ describe('VerifyOrder', function () {
         a(1, 2, 3);
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a(1, 2);                             a(1, 2, 3);  <-- args is error
 2.  a("hello", false);                   a(1, 2, 3);  <-- args is error
@@ -498,7 +498,7 @@ describe('VerifyOrder', function () {
         a(1, 2, 3);
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a(1, 2);                             a(1, 2, 3);  <-- args is error
 2.  a("hello", false);                   a(1, 2, 3);  <-- args is error
@@ -523,7 +523,7 @@ describe('VerifyOrder', function () {
         b('hello');
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a(1, 2);                             a(1, 3);  <-- args is error
 2.  a("hello", false);                   a("hello", false);
@@ -547,7 +547,7 @@ describe('VerifyOrder', function () {
         b('hello');
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a(1, 2);                             a(1, 2);
 2.  a("hello", false);                   a("a", false);  <-- args is error
@@ -571,7 +571,7 @@ describe('VerifyOrder', function () {
         b('hello');
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a(1, 2);                             a("a");  <-- args is error
 2.  a("hello", false);                   a("a", false);  <-- args is error
@@ -630,7 +630,7 @@ describe('VerifyOrder', function () {
         obj2.f2(1, true, 'king');
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  f1(1);                       f1(2);  <-- args is error
 2.  f2("hello");                 f2("hello");
@@ -654,7 +654,7 @@ describe('VerifyOrder', function () {
         a.f2();
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.f1();   a.f1();
 2.  <-- a.f2 is undefined & step is error`);
@@ -675,7 +675,7 @@ describe('VerifyOrder', function () {
         a.f1();
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.f1();   a.f1();
 2.  a.f1();  <-- a.f2 is undefined & step is error`);
@@ -696,7 +696,7 @@ describe('VerifyOrder', function () {
         a.f1();
       });
     } catch (err) {
-      console.info(err);
+
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.f1({"a":"value is undefined"});   a.f1();  <-- args is error`);
       return;
@@ -706,7 +706,7 @@ describe('VerifyOrder', function () {
   });
   it('test callInfo  args is as function', () => {
     const order = create();
-    const f1 = () => { console.info('hellos'); };
+    const f1 = () => { };
     order.addModuleCallFunction('a', 'f1', {
       context: {},
       args: [ f1 ],
@@ -782,7 +782,7 @@ describe('VerifyOrder', function () {
 
   it('test callInfo  args is object  it has function', () => {
     const order = create();
-    const f1 = () => { console.info('hellos'); };
+    const f1 = () => { };
     const f2 = () => {
 
     };
@@ -799,7 +799,6 @@ describe('VerifyOrder', function () {
         a.f1();
       });
     } catch (err) {
-      console.info(err);
       const f1Str = f1.toString();
       const f2Str = f2.toString();
       expect(err.message.replace(/\\n/g, '\n')).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
@@ -823,7 +822,6 @@ describe('VerifyOrder', function () {
         a.f1();
       });
     } catch (err) {
-      console.info(err);
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.f1({"message":"${error.message}");   a.f1();  <-- args is error`);
       return;
@@ -845,7 +843,6 @@ describe('VerifyOrder', function () {
         a.f1();
       });
     } catch (err) {
-      console.info(err);
       expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
 1.  a.f1({"err":{"message":"${error.message}"}});   a.f1();  <-- args is error`);
       return;
@@ -894,6 +891,97 @@ describe('VerifyOrder', function () {
       a.f1(Any, Any);
     });
   });
+
+  it('verify for single arg  Any Any', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ 'any' ],
+    });
+    expect(() => {
+      order.verify(({ a }: any) => {
+        a.f1(Any, Any);
+
+      });
+    }).to.be.throw();
+  });
+
+  it('verify for arg-object  Any Any', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    const param = { name: 'hello', hello: 'name' };
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1({ name: Any, hello: Any });
+    });
+  });
+
+  it('verify for arg-two-level-object  Any', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    const param = { one: { two: '' } };
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1({ one: Any });
+    });
+  });
+
+  it('verify for arg-two-level-object  two-level', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    const param = { one: { two: '' } };
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1({ one: { two: Any } });
+    });
+  });
+
+  it('verify for arg-object  Any ', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    const param = { name: 'hello' };
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1({ name: Any });
+    });
+  });
+  it('verify for arg-object-array any ', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    const param = { name: [ 'a', 'b', 'c' ] };
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1({ name: [ Any, VerifyOrder.String, VerifyOrder.String ] });
+    });
+  });
+
+  it('verify for arg-array any ', () => {
+
+    const order = create();
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ [ 'a', '1', 1 ] ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1([VerifyOrder.String, VerifyOrder.Any, VerifyOrder.Number]);
+    });
+  });
+
   it('verify for circle struct for sucess', () => {
     const { Any } = VerifyOrder;
 
@@ -902,7 +990,6 @@ describe('VerifyOrder', function () {
     const paramB = { id: 'b' };
     paramB.a = param;
     param.b = paramB;
-    console.info('verify for circle struct');
     order.addModuleCallFunction('a', 'f1', {
       args: [ param ],
     });
@@ -918,7 +1005,6 @@ describe('VerifyOrder', function () {
       const paramB = { id: 'b' };
       paramB.a = param;
       param.b = paramB;
-      console.info('verify for circle struct');
       order.addModuleCallFunction('a', 'f1', {
         args: [ param ],
       });
@@ -928,6 +1014,7 @@ describe('VerifyOrder', function () {
     } catch (err) {
       expect(err.message.startsWith('验证失败，左边为实际调用顺序，右边为期望调用顺序')).to.be.true;
     }
+
   });
 
 
