@@ -43,7 +43,7 @@ class VerifyOrderImpl {
   moduleVar: ModuleVarStatus;
   varNameObserve: VarNameObserve;
 
-  constructor(): VerifyOrderImpl {
+  constructor (): VerifyOrderImpl {
     this.steps = [];
     this.mockNames = {};
     this.moduleVar = {};
@@ -52,7 +52,7 @@ class VerifyOrderImpl {
   }
 
 
-  addModuleCallFunction(mockName: string, funcName: string, callInfo: ?CallInfo) {
+  addModuleCallFunction (mockName: string, funcName: string, callInfo: ?CallInfo) {
 
     this.checkMockNameOnAdd(mockName);
 
@@ -70,7 +70,7 @@ class VerifyOrderImpl {
     });
   }
 
-  checkCallInfo(callInfo: ?CallInfo): CallInfo {
+  checkCallInfo (callInfo: ?CallInfo): CallInfo {
     const result = callInfo ? callInfo : { args: [] };
     if (!result.args) {
       result.args = [];
@@ -79,7 +79,7 @@ class VerifyOrderImpl {
   }
 
 
-  addModuleVar(mockName: string, attrName: string) {
+  addModuleVar (mockName: string, attrName: string) {
     this.checkMockNameOnAdd(mockName);
 
     this.mockNames[ mockName ].push({
@@ -95,7 +95,7 @@ class VerifyOrderImpl {
     });
   }
 
-  addCallFunction(mockName: string, callInfo: ?CallInfo) {
+  addCallFunction (mockName: string, callInfo: ?CallInfo) {
     this.checkMockNameOnAdd(mockName);
 
     this.mockNames[ mockName ].push({
@@ -111,14 +111,14 @@ class VerifyOrderImpl {
     });
   }
 
-  checkMockNameOnAdd(mockName: string) {
+  checkMockNameOnAdd (mockName: string) {
 
     if (this.mockNames[ mockName ] === undefined) {
       this.mockNames[ mockName ] = [];
     }
   }
 
-  getMock(): any {
+  getMock (): any {
     this.moduleVar = {};
 
     const result = {},
@@ -155,7 +155,7 @@ class VerifyOrderImpl {
               verifyResult.error[ index ] = this.generateError({ stepError: true });
               index++;
               return {
-                withContext() {
+                withContext () {
 
                 },
               };
@@ -193,7 +193,7 @@ class VerifyOrderImpl {
 
 
             Object.defineProperty(value, expectName, {
-              get(): boolean {
+              get (): boolean {
 
                 const step = self.steps[ index ];
                 realyOrder.push({
@@ -241,7 +241,7 @@ class VerifyOrderImpl {
               verifyResult.error[ index ] = this.generateError({ stepError: true });
               index++;
               return {
-                withContext() {
+                withContext () {
 
                 },
               };
@@ -273,7 +273,7 @@ class VerifyOrderImpl {
           result[ expectMockName ] = value;
         } else {
           result[ expectMockName ] = new Proxy(value, {
-            get(target: Object, props: string): any {
+            get (target: Object, props: string): any {
               if (!target.hasOwnProperty(props)) {
                 throw new Error(`${expectMockName}.${props} is undefined`);
               }
@@ -298,7 +298,7 @@ class VerifyOrderImpl {
 
   }
 
-  verify(callback: Function) {
+  verify (callback: Function) {
     const mock = this.getMock();
     try {
       callback(mock);
@@ -313,12 +313,12 @@ class VerifyOrderImpl {
     mock.__verify__ && mock.__verify__();
   }
 
-  generateMsg(expectStep: Array<OrderStep>, actulyStep: Array<OrderStep>, error: VerifyResultErrorInfo): string {
+  generateMsg (expectStep: Array<OrderStep>, actulyStep: Array<OrderStep>, error: VerifyResultErrorInfo): string {
     let result: Array<string> = [],
       max: number = 0;
 
-    function setProp(obj: any, level: number): any {
-      if(level > 5){
+    function setProp (obj: any, level: number): any {
+      if (level > 5) {
         console.warn('param contain circle struct !');
         return {};
       }
@@ -359,7 +359,7 @@ class VerifyOrderImpl {
     }
 
 
-    function parseCallInfo(callInfo: CallInfo): string {
+    function parseCallInfo (callInfo: CallInfo): string {
       if (!callInfo) {
         return '';
       }
@@ -378,7 +378,7 @@ class VerifyOrderImpl {
       return rs.join(', ');
     }
 
-    function generateOneCall(stepObj: OrderStep): string {
+    function generateOneCall (stepObj: OrderStep): string {
       const { name, mockName, callInfo, type } = stepObj;
       switch (type) {
         case Module_Func:
@@ -435,56 +435,85 @@ class VerifyOrderImpl {
   }
 
 
-  isArgsEql(args?: Array<any> = [], callArgs?: Array<any> = []): boolean {
+  isArgsEql (actualArgs?: Array<any> = [], expectCallArgs?: Array<any> = []): boolean {
     const cloneArgs = [];
-    Array.prototype.push.apply(cloneArgs, args);
-    callArgs && callArgs.forEach((item: Symbol, index: number) => {
+    if (actualArgs.length !== expectCallArgs.length) {
+      return false;
+    }
+    Array.prototype.push.apply(cloneArgs, actualArgs);
+    let matchType = function (item, arg) {
       let isEqual = false;
       switch (item) {
         case NumberSymbol:
-          ObjectUtils.isNumber(args[ index ]) && (isEqual = true);
+          ObjectUtils.isNumber(arg) && (isEqual = true);
           break;
         case StringSymbol:
-          ObjectUtils.isString(args[ index ]) && (isEqual = true);
+          ObjectUtils.isString(arg) && (isEqual = true);
           break;
         case BooleanSymbol:
-          ObjectUtils.isBoolean(args[ index ]) && (isEqual = true);
+          ObjectUtils.isBoolean(arg) && (isEqual = true);
           break;
         case DateSymbol:
-          ObjectUtils.isDate(args[ index ]) && (isEqual = true);
+          ObjectUtils.isDate(arg) && (isEqual = true);
           break;
         case AnySymbol:
           isEqual = true;
           break;
         case Errorymbol:
-          ObjectUtils.isError(args[ index ]) && (isEqual = true);
+          ObjectUtils.isError(arg) && (isEqual = true);
           break;
         case FunctionSymbol:
-          ObjectUtils.isFunction(args[ index ]) && (isEqual = true);
+          ObjectUtils.isFunction(arg) && (isEqual = true);
           break;
         case ObjectSymbol:
-          ObjectUtils.isObject(args[ index ]) && (isEqual = true);
+          ObjectUtils.isObject(arg) && (isEqual = true);
           break;
         case ArraySymbol:
-          ObjectUtils.isArray(args[ index ]) && (isEqual = true);
+          ObjectUtils.isArray(arg) && (isEqual = true);
           break;
         case RegexpSymbol:
-          ObjectUtils.isRegExp(args[ index ]) && (isEqual = true);
+          ObjectUtils.isRegExp(arg) && (isEqual = true);
           break;
         case AsyncFunctionSymbol:
-          ObjectUtils.isAsyncFunction(args[ index ]) && (isEqual = true);
+          ObjectUtils.isAsyncFunction(arg) && (isEqual = true);
           break;
         default:
       }
-      isEqual && (cloneArgs[ index ] = item);
+      return isEqual;
+    };
+    expectCallArgs && expectCallArgs.forEach((expectItem: any, index: number) => {
+      const actualItem = actualArgs[ index ];
+
+      if (ObjectUtils.isArray(expectItem) && ObjectUtils.isArray(actualItem)) {
+
+        const itemArray = [];
+        Array.prototype.push.apply(itemArray, actualItem);
+        cloneArgs[ index ] = itemArray;
+
+        expectItem.forEach((item, i) => {
+          const actualAttrValue = actualItem[ i ];
+          matchType(item, actualAttrValue) && (itemArray[ i ] = item);
+        });
+
+      } else if (ObjectUtils.isObject(expectItem) && ObjectUtils.isObject(actualItem)) {
+        let cloneActualArg = Object.assign({}, actualItem);
+        cloneArgs[ index ] = cloneActualArg;
+        Object.keys(expectItem).forEach(key => {
+          const expectAttrValue = expectItem[ key ];
+          const actualAttrValue = actualArgs[ key ];
+          matchType(expectAttrValue, actualAttrValue) && (cloneActualArg[ key ] = expectAttrValue);
+        });
+      } else {
+        matchType(expectItem, actualItem) && (cloneArgs[ index ] = expectItem);
+      }
     });
-    return deepEqual(cloneArgs, callArgs);
+    return deepEqual(cloneArgs, expectCallArgs);
   }
 
-  withContext(callInfo ?: CallInfo, verifyResult: VerifyResult, index: number, self: VerifyOrderImpl): Function {
+  withContext (callInfo ?: CallInfo, verifyResult: VerifyResult, index: number, self: VerifyOrderImpl): Function {
     if (callInfo) {
       const { context } = callInfo;
-      return function(ctx: any) {
+      return function (ctx: any) {
         const ctxIsEql: boolean = ctx === context;
         if (ctxIsEql === false) {
           verifyResult.sucess = false;
@@ -502,7 +531,7 @@ class VerifyOrderImpl {
     return () => {};
   }
 
-  generateError({ ctxIsEql = true, mockNameIsEql = true, nameIsEql = true, argIsEql = true, stepError = false }: GenerateErrorFuncArg): Array<string> {
+  generateError ({ ctxIsEql = true, mockNameIsEql = true, nameIsEql = true, argIsEql = true, stepError = false }: GenerateErrorFuncArg): Array<string> {
     const result: Array<string> = [];
     if (mockNameIsEql === false) {
       result.push('module');
@@ -524,10 +553,10 @@ class VerifyOrderImpl {
 }
 
 const exportObj = {
-  create(): VerifyOrder {
+  create (): VerifyOrder {
     return new VerifyOrderImpl();
   },
-  createOrgial(): VerifyOrderImpl {
+  createOrgial (): VerifyOrderImpl {
     return new VerifyOrderImpl();
   },
   Function: FunctionSymbol,
