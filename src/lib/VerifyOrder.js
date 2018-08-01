@@ -502,15 +502,11 @@ class VerifyOrderImpl {
       return !!expectItem;
     };
 
-    function isCycle (item: any): boolean {
-      return isObject(item) && '$lugiaref' in item;
-    }
-
     function process (actualItem, path) {
       if (isArray(actualItem)) {
         let bool = false;
         actualItem.forEach((item, index) => {
-          if (isCycle(item)) {
+          if (cycle.isCycle(item)) {
             return;
           }
           const result = process(item, [ ...path, index + '' ]);
@@ -524,7 +520,7 @@ class VerifyOrderImpl {
 
         Object.keys(actualItem).forEach(key => {
           let item = actualItem[ key ];
-          if (isCycle(item)) {
+          if (cycle.isCycle(item)) {
             return;
           }
 
