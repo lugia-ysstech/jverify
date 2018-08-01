@@ -20,8 +20,9 @@
 */
 const { ObjectUtils } = require('@lugia/type-utils');
 let cycle = exports;
+const refName = '$lugiaref';
 cycle.isCycle = function (item) {
-  return ObjectUtils.isObject(item) && ('$lugiaref' in item);
+  return ObjectUtils.isObject(item) && (refName in item);
 };
 cycle.decycle = function decycle (object) {
   'use strict';
@@ -97,7 +98,7 @@ cycle.decycle = function decycle (object) {
           }
         }
       }
-      return nu;
+      return ObjectUtils.isError(value) ? value : nu;
     }
     return value;
   }(object, '$'));
@@ -143,7 +144,7 @@ cycle.retrocycle = function retrocycle ($) {
         for (i = 0; i < value.length; i += 1) {
           item = value[ i ];
           if (item && typeof item === 'object') {
-            path = item.$lugiaref;
+            path = item[ refName ];
             if (typeof path === 'string' && px.test(path)) {
               value[ i ] = eval(path);
             } else {
@@ -156,7 +157,7 @@ cycle.retrocycle = function retrocycle ($) {
           if (typeof value[ name ] === 'object') {
             item = value[ name ];
             if (item) {
-              path = item.$lugiaref;
+              path = item[ refName ];
               if (typeof path === 'string' && px.test(path)) {
                 value[ name ] = eval(path);
               } else {
