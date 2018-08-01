@@ -600,8 +600,12 @@ const exportObj = {
     const isObjectBool = isObject(data);
     let realyData = '数据类型错误';
     if (isArrayBool || isObjectBool) {
-      realyData = clone(data, true);
-
+      try{
+        realyData = clone(data, true);
+      }catch (err) {
+        console.warn('clone err');
+        realyData = data;
+      }
       function check (pathStr: any) {
         if (!isString(pathStr)) {
           throw  new Error('path参数错误');

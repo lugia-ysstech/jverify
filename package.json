@@ -1,6 +1,6 @@
 {
     "name": "@lugia/jverify",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "用于单元测试对象或方法打桩",
     "scripts": {
         "clean": "lugia-complie clean",
