@@ -20,14 +20,16 @@ const cycle = require('./cycle');
 const deepEqual = require('deep-equal');
 const { StringUtils, ObjectUtils } = require('@lugia/type-utils');
 const { pad } = StringUtils;
-const { isFunction,
+const {
+  isFunction,
   isError,
   isObject,
   isArray,
   isString,
   isDate,
   isNumber,
-  isBoolean } = ObjectUtils;
+  isBoolean
+} = ObjectUtils;
 const Module_Func = 'module_func';
 const Module_Var = 'module_var';
 const Func = 'func';
@@ -378,7 +380,19 @@ class VerifyOrderImpl {
           if (isError(arg)) {
             rs.push(`{"message":"${arg.message}"`);
           } else {
-            rs.push(JSON.stringify(setProp(cycle.decycle(arg))));
+            let resStr = '';
+
+            const obj = cycle.decycle(arg);
+            try {
+              let prop = setProp(obj);
+              let res = cycle.retrocycle(prop);
+              resStr = JSON.stringify(res);
+            } catch (err) {
+              let prop = setProp(obj);
+              resStr = JSON.stringify(prop);
+            }
+
+            rs.push(resStr);
           }
         }
       });
@@ -596,12 +610,13 @@ const exportObj = {
     const isObjectBool = isObject(data);
     let realyData = '数据类型错误';
     if (isArrayBool || isObjectBool) {
-      try{
+      try {
         realyData = clone(data, true);
-      }catch (err) {
+      } catch (err) {
         console.warn('clone err');
         realyData = data;
       }
+
       function check (pathStr: any) {
         if (!isString(pathStr)) {
           throw  new Error('path参数错误');

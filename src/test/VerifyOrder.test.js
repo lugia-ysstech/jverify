@@ -1078,5 +1078,36 @@ describe('VerifyOrder', function () {
 
   });
 
+  it('verify for repeat ref', () => {
+    const order = create();
+    const data = { hello: 'world' };
+    const param = { a: data, b: data, name: 1 };
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1({ a: { hello: 'world' }, b: { hello: 'world' }, name: VerifyOrder.Number });
+    });
+  });
+
+  it('verify for repeat ref error', () => {
+    const order = create();
+    const data = { hello: 'world' };
+    const param = { a: data, b: data, name: 1 };
+    order.addModuleCallFunction('a', 'f1', {
+      args: [param]
+    });
+    try {
+      order.verify(({ a }) => {
+        a.f1(data);
+      });
+    } catch (err) {
+      console.info(err.message);
+      expect(err.message).to.be.equal(`验证失败，左边为实际调用顺序，右边为期望调用顺序
+1.  a.f1({"a":{"hello":"world"},"b":{"hello":"world"},"name":1});   a.f1({"hello":"world"});  <-- args is error`);
+      return;
+    }
+  });
+
 
 });
