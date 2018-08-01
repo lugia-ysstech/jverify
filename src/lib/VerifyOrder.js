@@ -16,10 +16,18 @@ import type {
 } from 'jverify';
 
 const clone = require('clone');
+const cycle = require('./cycle');
 const deepEqual = require('deep-equal');
 const { StringUtils, ObjectUtils } = require('@lugia/type-utils');
 const { pad } = StringUtils;
-const { isFunction, isError, isObject, isArray } = ObjectUtils;
+const { isFunction,
+  isError,
+  isObject,
+  isArray,
+  isString,
+  isDate,
+  isNumber,
+  isBoolean } = ObjectUtils;
 const Module_Func = 'module_func';
 const Module_Var = 'module_var';
 const Func = 'func';
@@ -318,11 +326,8 @@ class VerifyOrderImpl {
     let result: Array<string> = [],
       max: number = 0;
 
-    function setProp (obj: any, level: number): any {
-      if (level > 5) {
-        console.warn('param contain circle struct !');
-        return {};
-      }
+    function setProp (obj: any): any {
+
       if (!isObject(obj)) {
         return obj;
       }
@@ -337,8 +342,9 @@ class VerifyOrderImpl {
             result[ i ] = value.toString();
           } else if (isError(value)) {
             result[ i ] = { message: value.message };
-          } else if (isObject(value)) {
-            result[ i ] = setProp(value, level + 1);
+          } else if (isObject(value) && !cycle.isCycle(value)) {
+
+            result[ i ] = setProp(value);
           }
         });
       } else {
@@ -351,8 +357,8 @@ class VerifyOrderImpl {
             result[ p ] = value.toString();
           } else if (isError(value)) {
             result[ p ] = { message: value.message };
-          } else if (isObject(value)) {
-            result[ p ] = setProp(value, level + 1);
+          } else if (isObject(value) && !cycle.isCycle(value)) {
+            result[ p ] = setProp(value);
           }
         }
       }
@@ -372,7 +378,7 @@ class VerifyOrderImpl {
           if (isError(arg)) {
             rs.push(`{"message":"${arg.message}"`);
           } else {
-            rs.push(JSON.stringify(setProp(arg, 0)));
+            rs.push(JSON.stringify(setProp(cycle.decycle(arg))));
           }
         }
       });
@@ -445,37 +451,37 @@ class VerifyOrderImpl {
       let isEqual = false;
       switch (item) {
         case NumberSymbol:
-          ObjectUtils.isNumber(arg) && (isEqual = true);
+          isNumber(arg) && (isEqual = true);
           break;
         case StringSymbol:
-          ObjectUtils.isString(arg) && (isEqual = true);
+          isString(arg) && (isEqual = true);
           break;
         case BooleanSymbol:
-          ObjectUtils.isBoolean(arg) && (isEqual = true);
+          isBoolean(arg) && (isEqual = true);
           break;
         case DateSymbol:
-          ObjectUtils.isDate(arg) && (isEqual = true);
+          isDate(arg) && (isEqual = true);
           break;
         case AnySymbol:
           isEqual = true;
           break;
         case Errorymbol:
-          ObjectUtils.isError(arg) && (isEqual = true);
+          isError(arg) && (isEqual = true);
           break;
         case FunctionSymbol:
-          ObjectUtils.isFunction(arg) && (isEqual = true);
+          isFunction && (isEqual = true);
           break;
         case ObjectSymbol:
-          ObjectUtils.isObject(arg) && (isEqual = true);
+          isObject(arg) && (isEqual = true);
           break;
         case ArraySymbol:
-          ObjectUtils.isArray(arg) && (isEqual = true);
+          isArray(arg) && (isEqual = true);
           break;
         case RegexpSymbol:
-          ObjectUtils.isRegExp(arg) && (isEqual = true);
+          isRegExp(arg) && (isEqual = true);
           break;
         case AsyncFunctionSymbol:
-          ObjectUtils.isAsyncFunction(arg) && (isEqual = true);
+          isAsyncFunction(arg) && (isEqual = true);
           break;
         default:
       }
@@ -496,23 +502,33 @@ class VerifyOrderImpl {
       return !!expectItem;
     };
 
+    function isCycle (item: any): boolean {
+      return isObject(item) && '$lugiaref' in item;
+    }
+
     function process (actualItem, path) {
-      if(path.length > 5){
-        return false;
-      }
-      if (ObjectUtils.isArray(actualItem)) {
+      if (isArray(actualItem)) {
         let bool = false;
         actualItem.forEach((item, index) => {
+          if (isCycle(item)) {
+            return;
+          }
           const result = process(item, [ ...path, index + '' ]);
           bool = bool || result;
         });
         if (bool === false) {
           return match(path, actualItem);
         }
-      } else if (ObjectUtils.isObject(actualItem)) {
+      } else if (isObject(actualItem)) {
         let bool = false;
+
         Object.keys(actualItem).forEach(key => {
-          let result = process(actualItem[ key ], [ ...path, key ]);
+          let item = actualItem[ key ];
+          if (isCycle(item)) {
+            return;
+          }
+
+          let result = process(item, [ ...path, key ]);
           bool = bool || result;
         });
         if (bool === false) {
@@ -523,7 +539,7 @@ class VerifyOrderImpl {
       }
     }
 
-    actualArgs.forEach((actualItem, index) => {
+    cycle.decycle(actualArgs).forEach((actualItem, index) => {
       process(actualItem, [ index + '' ]);
     });
     return deepEqual(fetch(), expectCallArgs);
@@ -580,14 +596,14 @@ const exportObj = {
   },
   parseObject (data: Object) {
 
-    const isArray = ObjectUtils.isArray(data);
-    const isObject = ObjectUtils.isObject(data);
+    const isArrayBool = isArray(data);
+    const isObjectBool = isObject(data);
     let realyData = '数据类型错误';
-    if (isArray || isObject) {
+    if (isArrayBool || isObjectBool) {
       realyData = clone(data, true);
 
       function check (pathStr: any) {
-        if (!ObjectUtils.isString(pathStr)) {
+        if (!isString(pathStr)) {
           throw  new Error('path参数错误');
         }
       }

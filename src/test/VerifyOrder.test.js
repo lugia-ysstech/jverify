@@ -978,7 +978,7 @@ describe('VerifyOrder', function () {
       args: [ [ 'a', '1', 1 ] ],
     });
     order.verify(({ a }: any) => {
-      a.f1([VerifyOrder.String, VerifyOrder.Any, VerifyOrder.Number]);
+      a.f1([ VerifyOrder.String, VerifyOrder.Any, VerifyOrder.Number ]);
     });
   });
 
@@ -995,6 +995,67 @@ describe('VerifyOrder', function () {
     });
     order.verify(({ a }: any) => {
       a.f1(Any);
+    });
+  });
+  it('verify for [[[[1]]]] Any', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    const param = [ [ [ [ 1 ] ] ] ];
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1(Any);
+    });
+  });
+  it('verify for [[[[1]]]] [Any]', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    const param = [ [ [ [ 1 ] ] ] ];
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1([ Any ]);
+    });
+  });
+
+  it('verify for [[[[1]]]] [[Any]]', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    const param = [ [ [ [ 1 ] ] ] ];
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1([ [ Any ] ]);
+    });
+  });
+  it('verify for [[[[1]]]] [[[Any]]]', () => {
+    const { Any } = VerifyOrder;
+
+    const order = create();
+    const param = [ [ [ [ 1 ] ] ] ];
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1([ [ [ Any ] ] ]);
+    });
+  });
+
+  it('verify for [[[[1]]]] [[[[Number]]]]', () => {
+
+    const order = create();
+    const param = [ [ [ [ 1 ] ] ] ];
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ param ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1([ [ [ [ VerifyOrder.Number ] ] ] ]);
     });
   });
 
