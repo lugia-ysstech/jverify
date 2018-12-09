@@ -460,6 +460,9 @@ class VerifyOrderImpl {
     if (actualArgs.length !== expectCallArgs.length) {
       return false;
     }
+    if(deepEqual(actualArgs, expectCallArgs)){
+      return true;
+    }
     const { fetch, setValue } = exportObj.parseObject(actualArgs);
     let matchType = function (item, arg) {
       let isEqual = false;
@@ -617,7 +620,7 @@ const exportObj = {
         realyData = data;
       }
 
-      function check (pathStr: any) {
+      function check (pathStr: any): void {
         if (!isString(pathStr)) {
           throw  new Error('path参数错误');
         }

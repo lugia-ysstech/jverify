@@ -4,6 +4,7 @@
  */
 const chai = require('chai');
 const VerifyOrder = require('../lib/VerifyOrder');
+const MockModule = require('../lib/MockModule');
 
 const {
   create,
@@ -1095,7 +1096,7 @@ describe('VerifyOrder', function () {
     const data = { hello: 'world' };
     const param = { a: data, b: data, name: 1 };
     order.addModuleCallFunction('a', 'f1', {
-      args: [param]
+      args: [ param ]
     });
     try {
       order.verify(({ a }) => {
@@ -1108,6 +1109,27 @@ describe('VerifyOrder', function () {
       return;
     }
   });
+  class Ligx{
+    constructor (name){
+      this.name = name;
+    }
+    hello(){
+      console.info('world');
+    }
+  }
+  it('verify for mockObject', () => {
+    const order = create();
+    const data =  new Ligx('xiaoming');
 
+    const mockData = MockModule.create(data);
+    mockData.mockFunction('hello');
+
+    order.addModuleCallFunction('a', 'f1', {
+      args: [ data ],
+    });
+    order.verify(({ a }: any) => {
+      a.f1(data);
+    });
+  });
 
 });
