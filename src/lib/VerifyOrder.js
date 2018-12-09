@@ -614,7 +614,7 @@ const exportObj = {
     let realyData = '数据类型错误';
     if (isArrayBool || isObjectBool) {
       try {
-        realyData = clone(data, true);
+        realyData = clone(data, true, true);
       } catch (err) {
         console.warn('clone err');
         realyData = data;
