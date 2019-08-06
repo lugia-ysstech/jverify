@@ -4,15 +4,16 @@
     "description": "用于单元测试对象或方法打桩",
     "scripts": {
         "clean": "lugia-complie clean",
-        "build": "lugia-complie lint && lugia-complie build",
-        "dist": " npm run build && npm publish ./target --registry=http://192.168.102.79:5001/",
+        "build": "lugia-complie build",
+        "dist": " npm run build && npm publish ",
         "dev": "lugia-complie dev --ig",
         "test": "lugia-complie test --watchAll",
         "cov": "lugia-complie cov"
     },
     "devDependencies": {
         "@lugia/lugia-complie": "^1.0.3",
-        "chai": "^4.1.2"
+        "chai": "^4.1.2",
+        "gulp-uglify": "^3.0.2"
     },
     "dependencies": {
         "@lugia/type-utils": "^1.0.1",
