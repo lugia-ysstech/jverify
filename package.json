@@ -1,6 +1,6 @@
 {
     "name": "@lugia/jverify",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "description": "用于单元测试对象或方法打桩",
     "scripts": {
         "clean": "lugia-complie clean",
@@ -11,9 +11,8 @@
         "cov": "lugia-complie cov"
     },
     "devDependencies": {
-        "@lugia/lugia-complie": "^1.0.3",
-        "chai": "^4.1.2",
-        "gulp-uglify": "^3.0.2"
+        "@lugia/lugia-complie": "^1.0.6",
+        "chai": "^4.1.2"
     },
     "dependencies": {
         "@lugia/type-utils": "^1.0.1",
